@@ -1,7 +1,9 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
+from forms import ThreadForm
 from datetime import datetime
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "this-is-my-secret-key"
 
 test_threads = {
     "1": {
@@ -26,3 +28,23 @@ def thread(thread_id):
     thread = test_threads[thread_id]
 
     return render_template("thread.html", thread=thread)
+
+@app.route("/post_thread", methods=["GET", "POST"])
+def post_thread():
+    form = ThreadForm()
+
+    if form.validate_on_submit():
+        title = form.title.data
+        desc = form.desc.data
+        date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+
+        id = str(len(test_threads.keys()) + 1)
+        test_threads[id] = {
+            "title": title,
+            "desc": desc,
+            "date": date
+        }
+
+        return redirect("/")
+    
+    return render_template("thread_form.html", form=form)
