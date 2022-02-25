@@ -8,8 +8,12 @@ Home
 <h1>Home Page</h1>
 
 {% for thread in threads %}
-    <h2>{{ thread["title"] }}</h2>
-    <p>{{ thread["date"] }}</p>
+    <h2>
+        <a href="{{ url_for('thread', thread_id=thread) }}">
+            {{ threads[thread]["title"] }}
+        </a>
+    </h2>
+    <p>{{ threads[thread]["date"] }}</p>
 {% endfor %}
 
 {% endblock %}
