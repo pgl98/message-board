@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block main_content %}
+<h1>Home Page</h1>
+
+{% for thread in threads %}
+    <h2>{{ thread["title"] }}</h2>
+    <p>{{ thread["date"] }}</p>
+{% endfor %}
+
+{% endblock %}
