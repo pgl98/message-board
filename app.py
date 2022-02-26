@@ -9,12 +9,12 @@ test_threads = {
     "1": {
         "title": "Hello there!",
         "date": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
-        "desc": "This is a test thread!"
+        "body": "This is a test thread!"
     },
     "2": {
         "title": "Yo!",
         "date": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
-        "desc": "Whassssssssuuuuuuup!"
+        "body": "Whassssssssuuuuuuup!"
     },
 }
 
@@ -35,13 +35,13 @@ def post_thread():
 
     if form.validate_on_submit():
         title = form.title.data
-        desc = form.desc.data
+        body = form.body.data
         date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
         id = str(len(test_threads.keys()) + 1)
         test_threads[id] = {
             "title": title,
-            "desc": desc,
+            "body": body,
             "date": date
         }
 
