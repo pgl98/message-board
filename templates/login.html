@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block username %}
+Log In
+{% endblock %}
+
+{% block main_content %}
+
+<h2>Log In</h2>
+
+<form action="" method="POST" novalidate>
+    {{ form.hidden_tag() }}
+
+    {% if error %}
+        <p><b>{{ error }}</b></p>
+    {% endif %}
+
+    {{ form.username.label }}
+    {{ form.username() }}
+    {% for error in form.username.errors %}
+        {{ error }}
+    {% endfor %}
+    <br/>
+    {{ form.password.label }}
+    {{ form.password() }}
+    {% for error in form.password.errors %}
+        {{ error }}
+    {% endfor %}
+    <br/>
+    {{ form.submit() }}
+</form>
+
+{% endblock %}

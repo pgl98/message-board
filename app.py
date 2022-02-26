@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect
-from forms import ThreadForm
+from forms import ThreadForm, LoginForm
 from datetime import datetime
 
 app = Flask(__name__)
@@ -16,6 +16,11 @@ test_threads = {
         "date": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
         "body": "Whassssssssuuuuuuup!"
     },
+}
+
+test_users = {
+    "admin": "admin",
+    "derek": "bridge"
 }
 
 @app.route("/")
@@ -48,3 +53,25 @@ def post_thread():
         return redirect("/")
     
     return render_template("thread_form.html", form=form)
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+
+    username = None
+    password = None
+    error = None
+
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        try:
+            if test_users[username] == password:
+                return redirect("/")
+        except:
+            error = "Invalid username or password"
+
+    return render_template("login.html", form=form, error=error)
+
+    return 
