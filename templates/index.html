@@ -19,6 +19,12 @@ Home
     </p>
 </a>
 
+<a href="{{ url_for('register') }}">
+    <p>
+        Register
+    </p>
+</a>
+
 {% for thread in threads %}
     <h2>
         <a href="{{ url_for('thread', thread_id=thread) }}">
