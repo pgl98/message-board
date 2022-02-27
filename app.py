@@ -51,14 +51,16 @@ def post_thread():
     if form.validate_on_submit():
         title = form.title.data
         body = form.body.data
-        date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        date_created = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        user_poster = "PLACEHOLDER"
 
-        id = str(len(test_threads.keys()) + 1)
-        test_threads[id] = {
-            "title": title,
-            "body": body,
-            "date": date
-        }
+        db = get_db()
+        db.execute("""
+            INSERT INTO threads (title, body, date_created, user_poster)
+            VALUES (?, ?, ?, ?);
+        """, (title, body, date_created, user_poster,))
+
+        db.commit()
 
         return redirect("/")
     

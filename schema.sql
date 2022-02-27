@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS threads;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE threads
 (
