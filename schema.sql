@@ -19,11 +19,11 @@ CREATE TABLE users
 
 CREATE TABLE comments
 (
-    thread_id INTEGER,
-    username TEXT,
+    comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    thread_id INTEGER NOT NULL,
+    username TEXT NOT NULL,
     date_created TEXT NOT NULL,
-    body TEXT NOT NULL,
-    PRIMARY KEY (thread_id, username)
+    body TEXT NOT NULL
 );
 
 INSERT INTO threads (title,body,date_created,user_poster) VALUES
@@ -42,5 +42,5 @@ INSERT INTO threads (title,body,date_created,user_poster) VALUES
 INSERT INTO users VALUES
 ("admin", "admin");
 
-INSERT INTO comments VALUES
+INSERT INTO comments (thread_id, username, date_created, body) VALUES
 (1, "admin", "123456789", "fuck you");

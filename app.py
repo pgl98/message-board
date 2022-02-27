@@ -1,5 +1,5 @@
-from flask import Flask, render_template, redirect
-from forms import ThreadForm, RegisterForm, LoginForm
+from flask import Flask, render_template, redirect, url_for
+from forms import ThreadForm, RegisterForm, LoginForm, CommentForm
 from database import get_db, close_db
 from datetime import datetime
 
@@ -16,8 +16,9 @@ def index():
 
     return render_template("index.html", threads=threads)
 
-@app.route("/<int:thread_id>")
+@app.route("/<int:thread_id>", methods=["GET", "POST"])
 def thread(thread_id):
+    form = CommentForm()
     db = get_db()
     thread = db.execute("""
         SELECT * FROM threads
@@ -29,9 +30,22 @@ def thread(thread_id):
         WHERE thread_id = ?;
     """, (thread_id,)).fetchall()
 
-    print(comments)
+    if form.validate_on_submit():
+        body = form.body.data
+        username = "PLACEHOLDER USERNAME"
+        date_created = "PLACEHOLDER DATE"
+        
+        db.execute("""
+            INSERT INTO comments (thread_id, username, date_created, body)
+            VALUES (?, ?, ?, ?);
+        """, (thread_id, username, date_created, body,))
 
-    return render_template("thread.html", thread=thread, comments=comments)
+        db.commit()
+
+        return redirect(url_for("thread", thread_id=thread_id))
+
+
+    return render_template("thread.html", thread=thread, comments=comments, form=form)
 
 @app.route("/post_thread", methods=["GET", "POST"])
 def post_thread():
