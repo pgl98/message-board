@@ -7,7 +7,7 @@
 {% block main_content %}
 
 <h2>{{ thread["title"] }}</h2>
-<p>{{ thread["date"] }}</p>
+<p>{{ thread["date_created"] }}, {{ thread["user_poster"] }}</p>
 <p>{{ thread["body"] }}</p>
 
 {% endblock %}

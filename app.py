@@ -1,9 +1,11 @@
 from flask import Flask, render_template, redirect
 from forms import ThreadForm, RegisterForm, LoginForm
+from database import get_db, close_db
 from datetime import datetime
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "this-is-my-secret-key"
+app.teardown_appcontext(close_db)
 
 test_threads = {
     "1": {
@@ -25,12 +27,20 @@ test_users = {
 
 @app.route("/")
 def index():
+    db = get_db()
+    threads = db.execute("""
+        SELECT * FROM threads;
+    """).fetchall()
 
-    return render_template("index.html", threads=test_threads)
+    return render_template("index.html", threads=threads)
 
-@app.route("/<thread_id>")
+@app.route("/<int:thread_id>")
 def thread(thread_id):
-    thread = test_threads[thread_id]
+    db = get_db()
+    thread = db.execute("""
+        SELECT * FROM threads
+        WHERE thread_id = ?;
+    """, (thread_id,)).fetchone()
 
     return render_template("thread.html", thread=thread)
 
