@@ -7,8 +7,27 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-    {% block main_content %}
+    <nav>
+        <a href="{{ url_for('post_thread') }}">
+            <p>
+                Post new thread.
+            </p>
+        </a>
+        
+        <a href="{{ url_for('login') }}">
+            <p>
+                Log In
+            </p>
+        </a>
+        
+        <a href="{{ url_for('register') }}">
+            <p>
+                Register
+            </p>
+        </a>
+    </nav>
 
+    {% block main_content %}
     {% endblock %}
 </body>
 </html>

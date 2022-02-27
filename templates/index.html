@@ -7,24 +7,6 @@ Home
 {% block main_content %}
 <h1>Home Page</h1>
 
-<a href="{{ url_for('post_thread') }}">
-    <p>
-        Post new thread.
-    </p>
-</a>
-
-<a href="{{ url_for('login') }}">
-    <p>
-        Log In
-    </p>
-</a>
-
-<a href="{{ url_for('register') }}">
-    <p>
-        Register
-    </p>
-</a>
-
 {% for thread in threads %}
     <h2>
         <a href="{{ url_for('thread', thread_id=thread) }}">
