@@ -7,24 +7,6 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "this-is-my-secret-key"
 app.teardown_appcontext(close_db)
 
-test_threads = {
-    "1": {
-        "title": "Hello there!",
-        "date": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
-        "body": "This is a test thread!"
-    },
-    "2": {
-        "title": "Yo!",
-        "date": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
-        "body": "Whassssssssuuuuuuup!"
-    },
-}
-
-test_users = {
-    "admin": "admin",
-    "derek": "bridge"
-}
-
 @app.route("/")
 def index():
     db = get_db()
@@ -75,13 +57,31 @@ def register():
         username = form.username.data
         password = form.password.data
 
-        if username in test_users:
-            message = "Username is already taken. Try another one."
-        else:
-            test_users[username] = password
+        db = get_db()
+
+        usernames = db.execute("""
+            SELECT username FROM users;
+        """).fetchall()
+
+        print(usernames)
+
+        # if username is already registered, the next block will give an error
+        # since username is the primary key of the users table
+        try:
+            db.execute("""
+                INSERT INTO users VALUES
+                (?, ?);
+            """, (username, password))
+            db.commit()
+
             message = "Successful Registration"
 
             return redirect("login")
+        except:
+            # For now, force user to put in password again. May change later.
+            # let them see the taken username, though.
+            form.password.data = None
+            message = "Username already taken. Try another one."
 
     return render_template("register.html", form=form, message=message)
 
@@ -96,10 +96,17 @@ def login():
         username = form.username.data
         password = form.password.data
 
-        try:
-            if test_users[username] == password:
-                return redirect("/")
-        except:
+        db = get_db()
+
+        user = db.execute("""
+            SELECT * FROM users
+            WHERE username = ?;
+        """, (username,)).fetchone()
+
+        if user["password"] == password and username is not None:
+            message = "Successful log in!"
+            #return redirect("/")
+        else:
             message = "Invalid username or password"
 
     return render_template("login.html", form=form, message=message)
