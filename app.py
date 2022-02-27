@@ -24,7 +24,14 @@ def thread(thread_id):
         WHERE thread_id = ?;
     """, (thread_id,)).fetchone()
 
-    return render_template("thread.html", thread=thread)
+    comments = db.execute("""
+        SELECT * FROM comments
+        WHERE thread_id = ?;
+    """, (thread_id,)).fetchall()
+
+    print(comments)
+
+    return render_template("thread.html", thread=thread, comments=comments)
 
 @app.route("/post_thread", methods=["GET", "POST"])
 def post_thread():

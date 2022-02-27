@@ -10,4 +10,9 @@
 <p>{{ thread["date_created"] }}, {{ thread["user_poster"] }}</p>
 <p>{{ thread["body"] }}</p>
 
+{% for comment in comments %}
+<p>{{ comment["date_created"] }}, {{ comment["username"] }}</p>
+<p>{{ comment["body"] }}</p>
+{% endfor %}
+
 {% endblock %}

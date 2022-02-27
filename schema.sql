@@ -22,6 +22,7 @@ CREATE TABLE comments
     thread_id INTEGER,
     username TEXT,
     date_created TEXT NOT NULL,
+    body TEXT NOT NULL,
     PRIMARY KEY (thread_id, username)
 );
 
@@ -42,4 +43,4 @@ INSERT INTO users VALUES
 ("admin", "admin");
 
 INSERT INTO comments VALUES
-(1, "admin", "fuck you");
+(1, "admin", "123456789", "fuck you");
