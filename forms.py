@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import InputRequired, Length
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import InputRequired, Length, EqualTo
 
 class ThreadForm(FlaskForm):
     title = StringField("Title:", validators=[InputRequired(), Length(max=255)])
@@ -9,12 +9,13 @@ class ThreadForm(FlaskForm):
 
 class RegisterForm(FlaskForm):
     username = StringField("Username:", validators=[InputRequired(), Length(max=100)])
-    password = StringField("Password:", validators=[InputRequired()])
+    password = PasswordField("Password:", validators=[InputRequired()])
+    confirm_password = PasswordField("Confirm Password:", validators=[InputRequired(), EqualTo("password")])
     submit = SubmitField("Register")
 
 class LoginForm(FlaskForm):
     username = StringField("Username:", validators=[InputRequired(), Length(max=100)])
-    password = StringField("Password:", validators=[InputRequired()])
+    password = PasswordField("Password:", validators=[InputRequired()])
     submit = SubmitField("Log In")
 
 class CommentForm(FlaskForm):
