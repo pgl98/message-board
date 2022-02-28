@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for
 from forms import ThreadForm, RegisterForm, LoginForm, CommentForm
 from database import get_db, close_db
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
 app = Flask(__name__)
@@ -16,7 +17,7 @@ def index():
 
     return render_template("index.html", threads=threads)
 
-@app.route("/<int:thread_id>", methods=["GET", "POST"])
+@app.route("/thread/<int:thread_id>", methods=["GET", "POST"])
 def thread(thread_id):
     form = CommentForm()
     db = get_db()
@@ -92,7 +93,7 @@ def register():
             db.execute("""
                 INSERT INTO users VALUES
                 (?, ?);
-            """, (username, password))
+            """, (username, generate_password_hash(password)),)
             db.commit()
 
             message = "Successful Registration"
@@ -124,7 +125,9 @@ def login():
             WHERE username = ?;
         """, (username,)).fetchone()
 
-        if user["password"] == password and username is not None:
+        password_is_valid = check_password_hash(user["password"], password)
+
+        if username is not None and password_is_valid:
             message = "Successful log in!"
             #return redirect("/")
         else:
