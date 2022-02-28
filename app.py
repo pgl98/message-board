@@ -60,7 +60,7 @@ def post_thread():
         title = form.title.data
         body = form.body.data
         date_created = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-        user_poster = "PLACEHOLDER"
+        user_poster = session["username"]
 
         db = get_db()
         db.execute("""
