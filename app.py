@@ -141,3 +141,9 @@ def login():
             message = "Invalid username or password"
 
     return render_template("login.html", form=form, message=message)
+
+@app.route("/logout")
+def logout():
+    session.clear()
+
+    return redirect("login")
