@@ -37,8 +37,8 @@ def thread(thread_id):
 
     if form.validate_on_submit():
         body = form.body.data
-        username = "PLACEHOLDER USERNAME"
-        date_created = "PLACEHOLDER DATE"
+        username = session["username"]
+        date_created = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         
         db.execute("""
             INSERT INTO comments (thread_id, username, date_created, body)
