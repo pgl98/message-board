@@ -107,7 +107,7 @@ def register():
 
         print(usernames)
 
-        # if username is already registered, the next block will give an error
+        # if username is already registered, the try block will give an error
         # since username is the primary key of the users table
         try:
             db.execute("""
