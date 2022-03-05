@@ -17,15 +17,19 @@
 <p>{{ comment["body"] }}</p>
 {% endfor %}
 
-<form action="" method="POST" novalidate>
-    {{ form.hidden_tag() }}
+{% if g.user %}
+    <form action="" method="POST" novalidate>
+        {{ form.hidden_tag() }}
 
-    {{ form.body() }}
-    {% for error in form.body.errors %}
-        {{ error }}
-    {% endfor %}
-    <br/>
-    {{ form.submit() }}
-</form>
+        {{ form.body() }}
+        {% for error in form.body.errors %}
+            {{ error }}
+        {% endfor %}
+        <br/>
+        {{ form.submit() }}
+    </form>
+{% else %}
+    <p>You must be logged in to post comments.</p>
+{% endif %}
 
 {% endblock %}
