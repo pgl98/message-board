@@ -14,13 +14,13 @@
             </p>
         </a>
 
-        {% if g.user %}
-            <a href="{{ url_for('post_thread') }}">
-                <p>
-                    Create new thread
-                </p>
-            </a>
+        <a href="{{ url_for('post_thread') }}">
+            <p>
+                Create new thread
+            </p>
+        </a>
 
+        {% if g.user %}
             <a href="{{ url_for('logout') }}">
                 <p>
                     Log Out

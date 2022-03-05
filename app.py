@@ -1,5 +1,6 @@
-from flask import Flask, render_template, redirect, url_for, session, g
+from flask import Flask, render_template, redirect, url_for, session, g, request
 from flask_session import Session
+from functools import wraps
 from forms import ThreadForm, RegisterForm, LoginForm, CommentForm
 from database import get_db, close_db
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -17,6 +18,14 @@ Session(app)
 # so that if the user is logged in, their username is stored in session
 def load_logged_in_user():
     g.user = session.get("username", None)
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if g.user is None:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route("/")
 def index():
@@ -59,6 +68,7 @@ def thread(thread_id):
     return render_template("thread.html", thread=thread, comments=comments, form=form)
 
 @app.route("/post_thread", methods=["GET", "POST"])
+@login_required
 def post_thread():
     form = ThreadForm()
 
@@ -118,11 +128,10 @@ def register():
     return render_template("register.html", form=form, message=message)
 
 @app.route("/login", methods=["GET", "POST"])
-def login():
+def login(message:str=None):
     form = LoginForm()
     username = None
     password = None
-    message = None
 
     if form.validate_on_submit():
         username = form.username.data
@@ -130,20 +139,23 @@ def login():
 
         db = get_db()
 
-        user = db.execute("""
+        try:
+            user = db.execute("""
             SELECT * FROM users
             WHERE username = ?;
-        """, (username,)).fetchone()
+            """, (username,)).fetchone()
 
-        password_is_valid = check_password_hash(user["password"], password)
+            password_is_valid = check_password_hash(user["password"], password)
 
-        if username is not None and password_is_valid:
-            message = "Successful log in!"
-            session.clear()
-            session["username"] = username
-
-            return redirect("/")
-        else:
+            if user is not None and password_is_valid:
+                message = "Successful log in!"
+                session.clear()
+                session["username"] = username
+                return redirect("/")
+            else:
+                message = "Invalid username or password"
+        except:
+            # don't specify which of the username or password is wrong for better security
             message = "Invalid username or password"
 
     return render_template("login.html", form=form, message=message)
