@@ -14,29 +14,31 @@
             </p>
         </a>
 
-        <a href="{{ url_for('post_thread') }}">
-            <p>
-                Create new thread
-            </p>
-        </a>
-        
-        <a href="{{ url_for('login') }}">
-            <p>
-                Log In
-            </p>
-        </a>
-        
-        <a href="{{ url_for('register') }}">
-            <p>
-                Register
-            </p>
-        </a>
+        {% if g.user %}
+            <a href="{{ url_for('post_thread') }}">
+                <p>
+                    Create new thread
+                </p>
+            </a>
 
-        <a href="{{ url_for('logout') }}">
-            <p>
-                Log Out
-            </p>
-        </a>
+            <a href="{{ url_for('logout') }}">
+                <p>
+                    Log Out
+                </p>
+            </a>
+        {% else %}
+            <a href="{{ url_for('login') }}">
+                <p>
+                    Log In
+                </p>
+            </a>
+
+            <a href="{{ url_for('register') }}">
+                <p>
+                    Register
+                </p>
+            </a>
+        {% endif %}
     </nav>
 
     {% block main_content %}
