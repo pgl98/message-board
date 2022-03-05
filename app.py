@@ -19,12 +19,12 @@ Session(app)
 def load_logged_in_user():
     g.user = session.get("username", None)
 
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
+def login_required(view):
+    @wraps(view)
+    def decorated_function(**kwargs):
         if g.user is None:
-            return redirect(url_for('login', next=request.url))
-        return f(*args, **kwargs)
+            return redirect( url_for('login', next=request.url) )
+        return view(**kwargs)
     return decorated_function
 
 @app.route("/")
@@ -151,7 +151,12 @@ def login(message:str=None):
                 message = "Successful log in!"
                 session.clear()
                 session["username"] = username
-                return redirect("/")
+
+                # look at 'login_required' decorator
+                next_page = request.args.get("next")
+                if not next_page:
+                    next_page = url_for("index")
+                return redirect(next_page)
             else:
                 message = "Invalid username or password"
         except:
