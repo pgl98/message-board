@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, HiddenField
 from wtforms.validators import InputRequired, Length, EqualTo
 
 class ThreadForm(FlaskForm):
@@ -21,3 +21,7 @@ class LoginForm(FlaskForm):
 class CommentForm(FlaskForm):
     body = StringField("Comment:", validators=[InputRequired(), Length(max=5000)])
     submit = SubmitField("Post Comment")
+
+class DeleteForm(FlaskForm):
+    id = HiddenField(validators=[InputRequired()])
+    submit = SubmitField("Delete")

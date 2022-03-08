@@ -13,8 +13,18 @@
 
 <h3>Comments</h3>
 {% for comment in comments %}
-<p>{{ comment["date_created"] }}, {{ comment["username"] }}</p>
-<p>{{ comment["body"] }}</p>
+    <p>{{ comment["date_created"] }}, {{ comment["username"] }}</p>
+    <p>{{ comment["body"] }}</p>
+    {% if g.user == comment["username"] %}
+        <form action="" method="POST" novalidate>
+            {{ delete_form.csrf_token }}
+            {# See here: https://stackoverflow.com/questions/41012947/hiddenfield-not-returning-a-value #}
+
+            {# delete_form.id is rendered twice if delete_form.hidden_tag() is used, so the first id field of the form has no value. #}
+            {{ delete_form.id(value=comment["comment_id"]) }}
+            {{ delete_form.submit() }}
+        </form>
+    {% endif %}
 {% endfor %}
 
 {% if g.user %}
