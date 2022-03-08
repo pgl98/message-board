@@ -29,14 +29,30 @@ def login_required(view):
     return decorated_function
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
+    delete_form = DeleteForm()
     db = get_db()
+
+    if delete_form.validate_on_submit():
+        thread_id = int(delete_form.id.data)
+        db.execute("""
+            DELETE FROM threads
+            WHERE thread_id = ?;
+        """, (thread_id,))
+
+        db.execute("""
+            DELETE FROM comments
+            WHERE thread_id = ?;
+        """, (thread_id,))
+
+        db.commit()
+
     threads = db.execute("""
         SELECT * FROM threads;
     """).fetchall()
 
-    return render_template("index.html", threads=threads)
+    return render_template("index.html", threads=threads, delete_form=delete_form)
 
 @app.route("/thread/<int:thread_id>", methods=["GET", "POST"])
 def thread(thread_id):
@@ -63,11 +79,10 @@ def thread(thread_id):
         return redirect(url_for("thread", thread_id=thread_id))
     if delete_form.validate_on_submit():
         comment_id = int(delete_form.id.data)
-
         db.execute("""
             DELETE FROM comments
             WHERE thread_id = ?
-            AND comment_id = ?
+            AND comment_id = ?;
         """, (thread_id, comment_id,))
         db.commit()
 

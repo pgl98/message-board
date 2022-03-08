@@ -14,6 +14,16 @@ Home
         </a>
     </h2>
     <p>{{ thread["date_created"] }}, {{ thread["user_poster"] }}</p>
+    {% if g.user == thread["user_poster"] %}
+        <form action="" method="POST" novalidate>
+            {{ delete_form.csrf_token }}
+            {# See here: https://stackoverflow.com/questions/41012947/hiddenfield-not-returning-a-value #}
+
+            {# delete_form.id is rendered twice if delete_form.hidden_tag() is used, so the first id field of the form has no value. #}
+            {{ delete_form.id(value=thread["thread_id"]) }}
+            {{ delete_form.submit() }}
+        </form>
+    {% endif %}
 {% endfor %}
 
 {% endblock %}
