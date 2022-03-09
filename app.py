@@ -49,6 +49,8 @@ def thread(thread_id):
         WHERE thread_id = ?;
     """, (thread_id,)).fetchone()
 
+    # This is the only endpoint in which a user can post comments,
+    # so I decided to leave the CommentForm here, (instead of making it its own route), even if it is messy.
     if form.validate_on_submit():
         body = form.body.data
         username = session["username"]
@@ -194,7 +196,6 @@ def delete_thread():
     db.commit()
 
     return redirect("/")
-
 
 @app.route("/delete_comment/", methods=["POST"])
 @login_required
