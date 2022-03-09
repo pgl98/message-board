@@ -16,13 +16,12 @@
     <p>{{ comment["date_created"] }}, {{ comment["username"] }}</p>
     <p>{{ comment["body"] }}</p>
     {% if g.user == comment["username"] %}
-        <form action="" method="POST" novalidate>
-            {{ delete_form.csrf_token }}
-            {# See here: https://stackoverflow.com/questions/41012947/hiddenfield-not-returning-a-value #}
-
-            {# delete_form.id is rendered twice if delete_form.hidden_tag() is used, so the first id field of the form has no value. #}
-            {{ delete_form.id(value=comment["comment_id"]) }}
-            {{ delete_form.submit() }}
+        <!-- I realise that this form is vulnerable to CSRF, but doing it this way is the only way I can think of that doesn't make the code messy.
+        This page already has the CommentForm, adding another form seems to make things complicated.-->
+        <form action="{{ url_for('delete_comment') }}" method="POST" novalidate>
+            <input type="hidden" name="comment_id" value="{{ comment['comment_id'] }}" />
+            <input type="hidden" name="thread_id" value="{{ thread['thread_id'] }}" />
+            <input type="submit" value="Delete" />
         </form>
     {% endif %}
 {% endfor %}

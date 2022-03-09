@@ -57,7 +57,6 @@ def index():
 @app.route("/thread/<int:thread_id>", methods=["GET", "POST"])
 def thread(thread_id):
     form = CommentForm()
-    delete_form = DeleteForm()
 
     db = get_db()
     thread = db.execute("""
@@ -77,23 +76,13 @@ def thread(thread_id):
         db.commit()
 
         return redirect(url_for("thread", thread_id=thread_id))
-    if delete_form.validate_on_submit():
-        comment_id = int(delete_form.id.data)
-        db.execute("""
-            DELETE FROM comments
-            WHERE thread_id = ?
-            AND comment_id = ?;
-        """, (thread_id, comment_id,))
-        db.commit()
-
-        return redirect(url_for("thread", thread_id=thread_id))
 
     comments = db.execute("""
         SELECT * FROM comments
         WHERE thread_id = ?;
     """, (thread_id,)).fetchall()
 
-    return render_template("thread.html", thread=thread, comments=comments, form=form, delete_form=delete_form)
+    return render_template("thread.html", thread=thread, comments=comments, form=form)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -201,9 +190,17 @@ def post_thread():
     
     return render_template("thread_form.html", form=form)
 
-# @app.route("/delete_comment/", methods=["POST"])
-# @login_required
-# def delete_comment():
-#     comment_id = int(request.form["comment_id"])
+@app.route("/delete_comment/", methods=["POST"])
+@login_required
+def delete_comment():
+    comment_id = int(request.form["comment_id"])
+    thread_id = int(request.form["thread_id"])
+    db = get_db()
 
-#     return "Deleted comment #" + str(comment_id)
+    db.execute("""
+        DELETE FROM comments
+        WHERE comment_id = ?;
+    """, (comment_id,))
+    db.commit()
+
+    return redirect(url_for("thread", thread_id=thread_id))
