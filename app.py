@@ -35,6 +35,7 @@ def init_db():
 # so that if the user is logged in, their username is stored in session
 def load_logged_in_user():
     g.user = session.get("username", None)
+    g.is_admin = session.get("is_admin", False)
 
 def login_required(view):
     @wraps(view)
@@ -149,6 +150,7 @@ def login(message:str=None):
                 message = "Successful log in!"
                 session.clear()
                 session["username"] = username
+                session["is_admin"] = user["is_admin"]
 
                 # look at 'login_required' decorator
                 next_page = request.args.get("next")
