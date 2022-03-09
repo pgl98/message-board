@@ -15,7 +15,7 @@
 {% for comment in comments %}
     <p>{{ comment["date_created"] }}, {{ comment["username"] }}</p>
     <p>{{ comment["body"] }}</p>
-    {% if g.user == comment["username"] %}
+    {% if g.user == comment["username"] or g.is_admin %}
         <!-- I realise that this form is vulnerable to CSRF, but doing it this way is the only way I can think of that doesn't make the code messy.
         This page already has the CommentForm, adding another form seems to make things complicated.-->
         <form action="{{ url_for('delete_comment') }}" method="POST" novalidate>

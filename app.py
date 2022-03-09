@@ -112,17 +112,18 @@ def register():
             db.execute("""
                 INSERT INTO users
                 VALUES (?, ?, ?);
-            """, (username, generate_password_hash(password)), False,)
+            """, (username, generate_password_hash(password), False,))
             db.commit()
 
             message = "Successful Registration"
 
             return redirect("login")
-        except:
+        except Exception as e:
             # For now, force user to put in password again. May change later.
             # let them see the taken username, though.
             form.password.data = None
             message = "Username already taken. Try another one."
+            print(str(e))
 
     return render_template("register.html", form=form, message=message)
 
