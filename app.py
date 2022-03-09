@@ -46,6 +46,14 @@ def login_required(view):
         return view(**kwargs)
     return decorated_function
 
+# def admin_required(view):
+#     @wraps(view)
+#     def decorated_function(**kwargs):
+#         if g.user is None or g.is_admin is not True:
+#             return "you're being naughty, stop"
+#         return view(**kwargs)
+#     return decorated_function
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -231,3 +239,17 @@ def delete_comment():
     db.commit()
 
     return redirect(url_for("thread", thread_id=thread_id))
+
+
+#-------- ROUTES FOR ADMINISTRATORS ONLY ---------
+
+@app.route("/user_list", methods=["GET", "POST"])
+#@admin_required
+def user_list():
+    db = get_db()
+
+    user_list = db.execute("""
+        SELECT username from users;
+    """).fetchall()
+
+    return render_template("user_list.html", user_list=user_list)

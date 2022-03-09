@@ -39,6 +39,14 @@
                 </p>
             </a>
         {% endif %}
+
+        {% if g.is_admin %}
+        <a href="{{ url_for('user_list') }}">
+            <p>
+                User List
+            </p>
+        </a>
+        {% endif %}
     </nav>
 
     {% block main_content %}
