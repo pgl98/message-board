@@ -31,28 +31,13 @@ def login_required(view):
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    delete_form = DeleteForm()
     db = get_db()
-
-    if delete_form.validate_on_submit():
-        thread_id = int(delete_form.id.data)
-        db.execute("""
-            DELETE FROM threads
-            WHERE thread_id = ?;
-        """, (thread_id,))
-
-        db.execute("""
-            DELETE FROM comments
-            WHERE thread_id = ?;
-        """, (thread_id,))
-
-        db.commit()
 
     threads = db.execute("""
         SELECT * FROM threads;
     """).fetchall()
 
-    return render_template("index.html", threads=threads, delete_form=delete_form)
+    return render_template("index.html", threads=threads)
 
 @app.route("/thread/<int:thread_id>", methods=["GET", "POST"])
 def thread(thread_id):
@@ -189,6 +174,27 @@ def post_thread():
         return redirect("/")
     
     return render_template("thread_form.html", form=form)
+
+@app.route("/delete_thread", methods=["POST"])
+@login_required
+def delete_thread():
+    thread_id = int(request.form["thread_id"])
+    db = get_db()
+
+    db.execute("""
+        DELETE FROM threads
+        WHERE thread_id = ?;
+    """, (thread_id,))
+
+    db.execute("""
+        DELETE FROM comments
+        WHERE thread_id = ?;
+    """, (thread_id,))
+
+    db.commit()
+
+    return redirect("/")
+
 
 @app.route("/delete_comment/", methods=["POST"])
 @login_required
