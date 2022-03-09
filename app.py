@@ -13,6 +13,23 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# DELETE THIS BEFORE SUBMITTING
+@app.before_first_request
+def init_db():
+    db = get_db()
+    try:
+        print("hello")
+        pw_hash = generate_password_hash("internetjanitor")
+        db.execute("""
+            INSERT INTO users
+            VALUES ("admin", ?, TRUE);
+        """, (pw_hash,))
+        db.commit()
+    except:
+        print("admin already in database")
+
+#
+
 @app.before_request
 # registers this function to run before each request,
 # so that if the user is logged in, their username is stored in session
@@ -92,9 +109,9 @@ def register():
         # since username is the primary key of the users table
         try:
             db.execute("""
-                INSERT INTO users VALUES
-                (?, ?);
-            """, (username, generate_password_hash(password)),)
+                INSERT INTO users
+                VALUES (?, ?, ?);
+            """, (username, generate_password_hash(password)), False,)
             db.commit()
 
             message = "Successful Registration"
@@ -126,7 +143,7 @@ def login(message:str=None):
             WHERE username = ?;
             """, (username,)).fetchone()
 
-            password_is_valid = check_password_hash(user["password"], password)
+            password_is_valid = check_password_hash(user["password_hash"], password)
 
             if user is not None and password_is_valid:
                 message = "Successful log in!"
