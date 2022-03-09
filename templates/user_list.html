@@ -8,7 +8,12 @@ User List
 <h1>User List</h1>
 
 {% for user in user_list %}
-    <p>{{ user["username"] }}</p>
+    {% set username = user["username"] %}
+    <p>{{ username }}</p>
+    <form action="{{ url_for('delete_user') }}" method="POST" novalidate>
+        <input type="hidden" name="username" value="{{ username }}" />
+        <input type="submit" value="Delete" />
+    </form>
 {% endfor %}
 
 {% endblock %}

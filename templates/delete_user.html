@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Delete User
+{% endblock %}
+
+{% block main_content %}
+    <p>Delete the user {{ username }}?</p>
+    <p><b>WARNING: ALL THREADS AND COMMENTS CREATED BY THE USER WILL ALSO BE PERMANENTLY DELETED.</b></p>
+    <form action="" method="POST" novalidate>
+        {{ form.csrf_token }}
+        {{ form.id(value=username) }}
+        {{ form.submit() }}
+    </form>
+
+{% endblock %}

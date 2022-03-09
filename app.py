@@ -1,3 +1,4 @@
+from ast import Delete
 from flask import Flask, render_template, redirect, url_for, session, g, request
 from flask_session import Session
 from functools import wraps
@@ -254,3 +255,41 @@ def user_list():
     """).fetchall()
 
     return render_template("user_list.html", user_list=user_list)
+
+@app.route("/delete_user", methods=["POST"])
+@admin_required
+def delete_user():
+    form = DeleteForm()
+
+    # when the admin visits this route for the first time after submitting the form in delete_user.html,
+    # we can extract the username from the form.
+    try:
+        username = request.form["username"]
+        form.id.data = username
+    # if username is None, then it was the form from DeleteForm that was submitted
+    except:
+        username = form.id.data
+
+    if form.validate_on_submit():
+        db = get_db()
+
+        db.execute("""
+            DELETE FROM threads
+            WHERE user_poster = ?;
+        """, (username,))
+
+        db.execute("""
+            DELETE FROM comments
+            WHERE username = ?;
+        """, (username,))
+
+        db.execute("""
+            DELETE FROM users
+            WHERE username = ?
+        """, (username,))
+
+        db.commit()
+
+        return redirect("user_list")
+
+    return render_template("delete_user.html", form=form, username=username)
