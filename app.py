@@ -46,13 +46,14 @@ def login_required(view):
         return view(**kwargs)
     return decorated_function
 
-# def admin_required(view):
-#     @wraps(view)
-#     def decorated_function(**kwargs):
-#         if g.user is None or g.is_admin is not True:
-#             return "you're being naughty, stop"
-#         return view(**kwargs)
-#     return decorated_function
+def admin_required(view):
+    @wraps(view)
+    def decorated_function(**kwargs):
+        # to access the page, the user must be logged in and be an admin.
+        if g.user is None or g.is_admin is False:
+            return "you're being naughty, stop"
+        return view(**kwargs)
+    return decorated_function
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -244,7 +245,7 @@ def delete_comment():
 #-------- ROUTES FOR ADMINISTRATORS ONLY ---------
 
 @app.route("/user_list", methods=["GET", "POST"])
-#@admin_required
+@admin_required
 def user_list():
     db = get_db()
 
