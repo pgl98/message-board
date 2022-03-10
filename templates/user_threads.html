@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ username }}
+{% endblock %}
+
+{% block main_content %}
+<h1>{{ username }}</h1>
+
+{% for thread in threads %}
+    <p>{{ thread["date_created"] }}, <a href="{{ url_for('user_profile', username=thread['user_poster']) }}">{{ thread["user_poster"] }}</a></p>
+    <p>{{ thread["body"] }}</p>
+{% endfor %}
+
+{% endblock %}

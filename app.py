@@ -178,6 +178,22 @@ def login(message:str=None):
 
 @app.route("/user/<username>")
 def user_profile(username):
+
+    return render_template("user_profile.html", username=username)
+
+@app.route("/user/<username>/comments")
+def user_comments(username):
+    db = get_db()
+
+    comments = db.execute("""
+        SELECT * FROM comments
+        WHERE username = ?;
+    """, (username,))
+
+    return render_template("user_comments.html", username=username, comments=comments)
+
+@app.route("/user/<username>/threads")
+def user_threads(username):
     db = get_db()
 
     threads = db.execute("""
@@ -185,12 +201,7 @@ def user_profile(username):
         WHERE user_poster = ?;
     """, (username,))
 
-    comments = db.execute("""
-        SELECT * FROM comments
-        WHERE username = ?;
-    """, (username,))
-
-    return render_template("user_profile.html", username=username, threads=threads, comments=comments)
+    return render_template("user_threads.html", username=username, threads=threads)
 
 #------- ROUTES FOR LOGGED-IN USERS ONLY ----------------
 
