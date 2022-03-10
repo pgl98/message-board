@@ -13,7 +13,7 @@
 
 <h3>Comments</h3>
 {% for comment in comments %}
-    <p>{{ comment["date_created"] }}, {{ comment["username"] }}</p>
+    <p>{{ comment["date_created"] }}, <a href="{{ url_for('user_profile', username=comment['username']) }}">{{ comment["username"] }}</a></p>
     <p>{{ comment["body"] }}</p>
     {% if g.user == comment["username"] or g.is_admin %}
         <!-- I realise that this form is vulnerable to CSRF, but doing it this way is the only way I can think of that doesn't make the code messy.
