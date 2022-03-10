@@ -178,9 +178,19 @@ def login(message:str=None):
 
 @app.route("/user/<username>")
 def user_profile(username):
-    
+    db = get_db()
 
-    return username
+    threads = db.execute("""
+        SELECT * FROM threads
+        WHERE user_poster = ?;
+    """, (username,))
+
+    comments = db.execute("""
+        SELECT * FROM comments
+        WHERE username = ?;
+    """, (username,))
+
+    return render_template("user_profile.html", username=username, threads=threads, comments=comments)
 
 #------- ROUTES FOR LOGGED-IN USERS ONLY ----------------
 
