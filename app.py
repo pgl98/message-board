@@ -176,6 +176,12 @@ def login(message:str=None):
 
     return render_template("login.html", form=form, message=message)
 
+@app.route("/user/<username>")
+def user_profile(username):
+    
+
+    return username
+
 #------- ROUTES FOR LOGGED-IN USERS ONLY ----------------
 
 @app.route("/logout")

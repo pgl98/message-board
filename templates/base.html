@@ -21,6 +21,11 @@
         </a>
 
         {% if g.user %}
+            <a href="{{ url_for('user_profile', username=g.user) }}">
+                <p>
+                    User Profile
+                </p>
+            </a>
             <a href="{{ url_for('logout') }}">
                 <p>
                     Log Out
