@@ -9,7 +9,7 @@
 
 {% for thread in threads %}
     <p>{{ thread["date_created"] }}, <a href="{{ url_for('user_profile', username=thread['user_poster']) }}">{{ thread["user_poster"] }}</a></p>
-    <p>{{ thread["body"] }}</p>
+    <p><a href="{{ url_for('thread', thread_id=thread['thread_id']) }}">{{ thread["title"] }}</a></p>
 {% endfor %}
 
 {% endblock %}
