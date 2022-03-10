@@ -13,7 +13,7 @@ Home
             {{ thread["title"] }}
         </a>
     </h2>
-    <p>{{ thread["date_created"] }}, {{ thread["user_poster"] }}</p>
+    <p>{{ thread["date_created"] }}, <a href="{{ url_for('user_profile', username=thread['user_poster']) }}">{{ thread["user_poster"] }}</a></p>
     {% if g.user == thread["user_poster"] or g.is_admin %}
         <!-- I realise that this form is vulnerable to CSRF, but doing it this way is the only way I can think of that doesn't make the code messy.
         This page already has the CommentForm, adding another form seems to make things complicated.-->
