@@ -4,57 +4,45 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
     <nav>
         <a href="{{ url_for('index') }}">
-            <p>
-                Home
-            </p>
+            Home
         </a>
-
         <a href="{{ url_for('post_thread') }}">
-            <p>
-                Create new thread
-            </p>
+            Create new thread
         </a>
-
         {% if g.user %}
             <a href="{{ url_for('user_profile', username=g.user) }}">
-                <p>
-                    User Profile
-                </p>
+                User Profile
             </a>
             <a href="{{ url_for('logout') }}">
-                <p>
-                    Log Out
-                </p>
+                Log Out
             </a>
         {% else %}
             <a href="{{ url_for('login') }}">
-                <p>
-                    Log In
-                </p>
+                Log In
             </a>
-
             <a href="{{ url_for('register') }}">
-                <p>
-                    Register
-                </p>
+                Register
             </a>
         {% endif %}
 
         {% if g.is_admin %}
-        <a href="{{ url_for('user_list') }}">
-            <p>
+            <a href="{{ url_for('user_list') }}">
                 User List
-            </p>
-        </a>
+            </a>
         {% endif %}
     </nav>
 
     {% block main_content %}
     {% endblock %}
+
+    <footer>
+        <small>&copy; Paolo Lamadrid, 2022. All rights reserved.</small>
+    </footer>
 </body>
 </html>

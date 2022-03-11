@@ -5,23 +5,28 @@ Home
 {% endblock %}
 
 {% block main_content %}
-<h1>Home Page</h1>
-
+<ol>
 {% for thread in threads %}
-    <h2>
-        <a href="{{ url_for('thread', thread_id=thread['thread_id']) }}">
-            {{ thread["title"] }}
-        </a>
-    </h2>
-    <p>{{ thread["date_created"] }}, <a href="{{ url_for('user_profile', username=thread['user_poster']) }}">{{ thread["user_poster"] }}</a></p>
-    {% if g.user == thread["user_poster"] or g.is_admin %}
-        <!-- I realise that this form is vulnerable to CSRF, but doing it this way is the only way I can think of that doesn't make the code messy.
-        This page already has the CommentForm, adding another form seems to make things complicated.-->
-        <form action="{{ url_for('delete_thread') }}" method="POST" novalidate>
-            <input type="hidden" name="thread_id" value="{{ thread['thread_id'] }}" />
-            <input type="submit" value="Delete" />
-        </form>
-    {% endif %}
+    <li class="thread_thumbnail">
+        <h3>
+            <a href="{{ url_for('thread', thread_id=thread['thread_id']) }}">
+                {{ thread["title"] }}
+            </a>
+        </h3>
+        <p>
+            by <a href="{{ url_for('user_profile', username=thread['user_poster']) }}">{{ thread["user_poster"] }}</a> on {{ thread["date_created"] }}
+            {% if g.user == thread["user_poster"] or g.is_admin %}
+            <!-- I realise that this form is vulnerable to CSRF, but doing it this way is the only way I can think of that doesn't make the code messy.
+            This page already has the CommentForm, adding another form seems to make things complicated.-->
+            <form action="{{ url_for('delete_thread') }}" method="POST" novalidate>
+                <input type="hidden" name="thread_id" value="{{ thread['thread_id'] }}" />
+                <input type="submit" value="Delete" class="delete_button" />
+            </form>
+            {% endif %}
+        </p>
+        
+    </li>
 {% endfor %}
+</ol>
 
 {% endblock %}

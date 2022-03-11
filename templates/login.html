@@ -18,13 +18,13 @@ Log In
     {{ form.username.label }}
     {{ form.username() }}
     {% for error in form.username.errors %}
-        {{ error }}
+        <span class="error_message">{{ error }}</span>
     {% endfor %}
     <br/>
     {{ form.password.label }}
     {{ form.password() }}
     {% for error in form.password.errors %}
-        {{ error }}
+        <span class="error_message">{{ error }}</span>
     {% endfor %}
     <br/>
     {{ form.submit() }}

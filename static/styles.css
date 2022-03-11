@@ -1,0 +1,86 @@
+:root {
+    font-size: 16px;
+    --bgcolor: #DC9E82;
+    --txtcolor: #262218;
+    --bodycolor: #F2F3D9;
+    --linkcolor: #1D2F6F;
+    --warningcolor: #C1292E;
+    --accentcolor: #C16E70;
+    background-color: var(--bgcolor);
+}
+
+body {
+    background-color: var(--bodycolor);
+    color: var(--txtcolor);
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 1rem;
+    width: 70%;
+    margin: 0 auto;
+}
+
+footer {
+    margin-top: 50%;
+}
+
+b, strong {
+    color: var(--warningcolor);
+}
+
+a {
+    text-decoration: none;
+    color: var(--linkcolor);
+}
+
+.error_message {
+    color: var(--warningcolor)
+}
+
+nav {
+    background-color: var(--accentcolor);
+    display: flex;
+    justify-content: flex-start;
+}
+
+.delete_button {
+    background-color: var(--warningcolor);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+nav a {
+    color: var(--txtcolor);
+    margin: 0.25rem 1rem;
+}
+
+
+.thread_thumbnail h3, .thread_detailed h1 {
+    margin-top: 2rem;
+    margin-bottom: 0;
+}
+
+.thread_thumbnail p, .thread_detailed p {
+    margin: 0;
+}
+
+.thread_detailed p, .thread_detailed h1 , .comments_section {
+    margin-left: 1rem;
+}
+
+.thread_body {
+    width: 90%;
+    border: solid var(--txtcolor);
+    border-radius: 5px;
+    margin: 0rem;
+    padding: 0.5rem;
+}
+
+.comment_info {
+    font-size: 0.8rem;
+    margin-bottom: 0;
+}
+
+.comment_body {
+    margin-top: 0;
+    margin-bottom: 0;
+}
