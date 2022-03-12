@@ -56,6 +56,38 @@ def admin_required(view):
         return view(**kwargs)
     return decorated_function
 
+#----------- IMAGE UPLOAD TEST ---------------------------
+import os
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileField # FileField is the Flask-WTF field for files
+from wtforms import SubmitField
+from werkzeug.utils import secure_filename # this is for security reasons
+
+# create the class
+class ImageUploadForm(FlaskForm):
+    image = FileField()
+    submit = SubmitField()
+
+app.config["UPLOAD_FOLDER"] = 'static/uploads/'
+
+@app.route("/image_upload_test", methods=["GET", "POST"])
+def image_upload():
+    form = ImageUploadForm()
+
+    if form.validate_on_submit():
+        # get the file data
+        image_file = form.image.data
+        # sanitize the name to prevent XSS
+        filename = secure_filename(image_file.filename)
+        # save the image the this filepath,
+        # os.path.join() gives the filepath.
+        image_file.save(os.path.join(
+            app.config["UPLOAD_FOLDER"], filename
+        ))
+
+    return render_template("image_upload_test.html", form=form)
+
+#-----------------------------------------------
 
 @app.route("/", methods=["GET", "POST"])
 def index():
