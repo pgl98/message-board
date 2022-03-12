@@ -5,7 +5,22 @@
 {% endblock %}
 
 {% block main_content %}
-<h1>{{ username }}</h1>
+<h1>{{ user_info["username"] }}</h1>
+<p>joined on {{ user_info["date_created"] }}</p>
+
+{% if user_info["profile_image"] %}
+<p>{{ user_info["profile_image"] }}</p>
+{% else %}
+<p>User has no profile image!</p>
+{% endif %}
+
+<h2>About</h2>
+{% if user_info["about"] %}
+<p>{{ user_info["about"] }}</p>
+{% else %}
+<p>User has not written anything here!</p>
+{% endif %}
+
 
 <a href="{{ url_for('user_threads', username=username) }}">Threads</a>
 <a href="{{ url_for('user_comments', username=username) }}">Comments</a>

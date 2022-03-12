@@ -204,8 +204,13 @@ def login(message:str=None):
 
 @app.route("/user/<username>")
 def user_profile(username):
+    db = get_db()
+    user_info = db.execute("""
+        SELECT username, date_created, about, profile_image FROM users
+        WHERE username = ?;
+    """, (username,)).fetchone()
 
-    return render_template("user_profile.html", username=username)
+    return render_template("user_profile.html", user_info=user_info) 
 
 @app.route("/user/<username>/comments")
 def user_comments(username):
