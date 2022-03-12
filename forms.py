@@ -30,5 +30,7 @@ class DeleteForm(FlaskForm):
 
 # create the class
 class UserProfileForm(FlaskForm):
+    username = HiddenField()
     profile_image = FileField()
-    submit = SubmitField()
+    about = StringField("About")
+    submit = SubmitField("Confirm Edit")

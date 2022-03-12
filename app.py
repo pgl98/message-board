@@ -300,6 +300,32 @@ def delete_comment():
 
     return redirect(url_for("thread", thread_id=thread_id))
 
+@app.route("/edit_profile", methods=["POST"])
+def edit_profile():
+    form = UserProfileForm()
+    try:
+        username = request.form["username"]
+        form.username.data = username
+    except:
+        username = form.id.data
+
+    if form.validate_on_submit():
+        profile_image = form.profile_image.data.filename
+        about = form.about.data
+        db = get_db()
+
+        db.execute("""
+            UPDATE users
+            SET about = ?, profile_image = ?
+            WHERE username = ?;
+        """, (about, profile_image, username,))
+
+        db.commit()
+
+        return redirect( url_for("user_profile", username=username) )
+
+    return render_template("edit_user_profile.html", form=form)
+
 
 #-------- ROUTES FOR ADMINISTRATORS ONLY ---------
 
