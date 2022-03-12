@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, HiddenField, RadioField
+from flask_wtf.file import FileField # FileField is the Flask-WTF field for files
 from wtforms.validators import InputRequired, Length, EqualTo
 
 class ThreadForm(FlaskForm):
@@ -26,3 +27,8 @@ class DeleteForm(FlaskForm):
     id = HiddenField(validators=[InputRequired()])
     submit = SubmitField("Delete")
     
+
+# create the class
+class UserProfileForm(FlaskForm):
+    profile_image = FileField()
+    submit = SubmitField()

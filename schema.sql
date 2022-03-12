@@ -15,7 +15,10 @@ CREATE TABLE users
 (
     username TEXT PRIMARY KEY,
     password_hash TEXT NOT NULL,
-    is_admin INTEGER FALSE
+    is_admin INTEGER FALSE,
+    date_created TEXT NOT NULL,
+    about TEXT DEFAULT "",
+    profile_image TEXT DEFAULT "",
 );
 
 CREATE TABLE comments
