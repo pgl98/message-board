@@ -310,16 +310,26 @@ def edit_profile():
         username = form.id.data
 
     if form.validate_on_submit():
-        profile_image = form.profile_image.data.filename
+        profile_image = form.profile_image.data
         about = form.about.data
         db = get_db()
+
+        # sanitize the name to prevent XSS (probably not necessary since the filename is changed anyway but it's no harm)
+        filename = secure_filename(profile_image.filename)
+        file_extension = os.path.splitext(filename)[1]
+
+        # the filename for the image will be <username>.jpg because usernames are unique
+        new_filename = username + file_extension
+        # save the image to the the filepath returned by os.path.join().
+        profile_image.save(os.path.join(
+            app.config["UPLOAD_FOLDER"], new_filename
+        ))
 
         db.execute("""
             UPDATE users
             SET about = ?, profile_image = ?
             WHERE username = ?;
-        """, (about, profile_image, username,))
-
+        """, (about, new_filename, username,))
         db.commit()
 
         return redirect( url_for("user_profile", username=username) )

@@ -8,13 +8,15 @@
 <h1>{{ user_info["username"] }}</h1>
 <p>joined on {{ user_info["date_created"] }}</p>
 
+{% if g.user == user_info["username"] %}
 <form action="{{ url_for('edit_profile') }}" method="POST" novalidate>
     <input type="hidden" name="username" value="{{ user_info['username'] }}" />
     <input type="submit" value="Edit Profile" />
 </form>
+{% endif %}
 
 {% if user_info["profile_image"] %}
-<p>{{ user_info["profile_image"] }}</p>
+<img src="{{ url_for('static', filename='uploads/' + user_info['profile_image']) }}" alt="profile image" />
 {% else %}
 <p>User has no profile image!</p>
 {% endif %}
@@ -27,7 +29,7 @@
 {% endif %}
 
 
-<a href="{{ url_for('user_threads', username=username) }}">Threads</a>
-<a href="{{ url_for('user_comments', username=username) }}">Comments</a>
+<a href="{{ url_for('user_threads', username=user_info['username']) }}">Threads</a>
+<a href="{{ url_for('user_comments', username=user_info['username']) }}">Comments</a>
 
 {% endblock %}
