@@ -1,11 +1,14 @@
-from ast import Delete
+import os
 from flask import Flask, render_template, redirect, url_for, session, g, request
 from flask_session import Session
 from functools import wraps
-from forms import ThreadForm, RegisterForm, LoginForm, CommentForm, DeleteForm
+from forms import ThreadForm, RegisterForm, LoginForm, CommentForm, DeleteForm, UserProfileForm
 from database import get_db, close_db
 from werkzeug.security import generate_password_hash, check_password_hash
+# this is to make uploading files more secure, see 'Information for the Pros' section here: https://flask.palletsprojects.com/en/2.0.x/patterns/fileuploads/
+from werkzeug.utils import secure_filename
 from datetime import datetime
+
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "this-is-my-secret-key"
@@ -22,8 +25,8 @@ def init_db():
         print("hello")
         pw_hash = generate_password_hash("internetjanitor")
         db.execute("""
-            INSERT INTO users
-            VALUES ("admin", ?, TRUE);
+            INSERT INTO users (username, password_hash, is_admin, date_created)
+            VALUES ("admin", ?, TRUE, "Since the beginning");
         """, (pw_hash,))
         db.commit()
     except:
@@ -56,31 +59,22 @@ def admin_required(view):
         return view(**kwargs)
     return decorated_function
 
-#----------- IMAGE UPLOAD TEST ---------------------------
-import os
-from flask_wtf import FlaskForm
-from flask_wtf.file import FileField # FileField is the Flask-WTF field for files
-from wtforms import SubmitField
-from werkzeug.utils import secure_filename # this is for security reasons
 
-# create the class
-class ImageUploadForm(FlaskForm):
-    image = FileField()
-    submit = SubmitField()
+
+# the code below is a modified version of the code found here :https://flask-wtf.readthedocs.io/en/latest/form/
 
 app.config["UPLOAD_FOLDER"] = 'static/uploads/'
 
 @app.route("/image_upload_test", methods=["GET", "POST"])
 def image_upload():
-    form = ImageUploadForm()
+    form = UserProfileForm()
 
     if form.validate_on_submit():
         # get the file data
-        image_file = form.image.data
+        image_file = form.profile_image.data
         # sanitize the name to prevent XSS
         filename = secure_filename(image_file.filename)
-        # save the image the this filepath,
-        # os.path.join() gives the filepath.
+        # save the image to the the filepath returned by os.path.join().
         image_file.save(os.path.join(
             app.config["UPLOAD_FOLDER"], filename
         ))
@@ -151,13 +145,14 @@ def register():
         # if username is already registered, the try block will give an error
         # since username is the primary key of the users table
         try:
+            date_created = date_created = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
             db.execute("""
-                INSERT INTO users
-                VALUES (?, ?, ?);
-            """, (username, generate_password_hash(password), False,))
+                INSERT INTO users (username, password_hash, is_admin, date_created)
+                VALUES (?, ?, ?, ?);
+            """, (username, generate_password_hash(password), False, date_created))
             db.commit()
 
-            message = "Successful Registration"
+            message = "Successful Registration"  
 
             return redirect("login")
         except Exception as e:
@@ -210,8 +205,13 @@ def login(message:str=None):
 
 @app.route("/user/<username>")
 def user_profile(username):
+    db = get_db()
+    user_info = db.execute("""
+        SELECT username, date_created, about, profile_image FROM users
+        WHERE username = ?;
+    """, (username,)).fetchone()
 
-    return render_template("user_profile.html", username=username)
+    return render_template("user_profile.html", user_info=user_info) 
 
 @app.route("/user/<username>/comments")
 def user_comments(username):
@@ -301,6 +301,59 @@ def delete_comment():
 
     return redirect(url_for("thread", thread_id=thread_id))
 
+@app.route("/edit_profile", methods=["POST"])
+def edit_profile():
+    form = UserProfileForm()
+    username = None
+    try:
+        username = request.form["username"]
+        form.username.data = username
+    except:
+        username = form.id.data
+
+    if form.validate_on_submit():
+        profile_image = form.profile_image.data
+        about = form.about.data
+        db = get_db()
+
+        current_profile_image = db.execute("""
+            SELECT profile_image from users
+            WHERE username = ?;
+        """, (username,)).fetchone()["profile_image"]
+
+        if profile_image:
+            # if the user already has a profile image, delete it
+            if current_profile_image:
+                os.remove(os.path.join(
+                    app.config["UPLOAD_FOLDER"], current_profile_image
+                ))
+
+            # all the code involved in uploading images is a modified version of the code found here :https://flask-wtf.readthedocs.io/en/latest/form/
+
+            # sanitize the name to prevent XSS (probably not necessary since the filename is changed anyway but it's no harm)
+            filename = secure_filename(profile_image.filename)
+            file_extension = os.path.splitext(filename)[1]
+
+            # the filename for the image will be of the form '<username>.<file extension>'  because usernames are unique
+            filename = username + file_extension
+            # save the image to the the filepath returned by os.path.join().
+            profile_image.save(os.path.join(
+                app.config["UPLOAD_FOLDER"], filename
+            ))
+        else:
+            filename = current_profile_image
+
+        db.execute("""
+            UPDATE users
+            SET about = ?, profile_image = ?
+            WHERE username = ?;
+        """, (about, filename, username,))
+        db.commit()
+
+        return redirect( url_for("user_profile", username=username) )
+
+    return render_template("edit_user_profile.html", form=form)
+
 
 #-------- ROUTES FOR ADMINISTRATORS ONLY ---------
 
@@ -342,9 +395,19 @@ def delete_user():
             WHERE username = ?;
         """, (username,))
 
+        profile_image = db.execute("""
+            SELECT profile_image from users
+            WHERE username = ?;
+        """, (username,)).fetchone()["profile_image"]
+
+        if profile_image:
+            os.remove(os.path.join(
+                app.config["UPLOAD_FOLDER"], profile_image
+            ))
+
         db.execute("""
             DELETE FROM users
-            WHERE username = ?
+            WHERE username = ?;
         """, (username,))
 
         db.commit()

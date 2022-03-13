@@ -5,7 +5,14 @@
 <!-- Need to have the 'enctype' attribute set to 'multipart/form-data' so that input elements in the form can upload image data -->
 <form action="" method="POST" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
-    {{ form.image() }}
+    {{ form.profile_image() }}
+    {% for error in form.profile_image.errors %}
+        <b>{{ error }}</b>
+    {% endfor %}
+    <br/>
+    {{ form.about.label }}
+    {{ form.about() }}
+    <br/>
     {{ form.submit() }}
 </form>
 
