@@ -6,6 +6,9 @@
 <form action="" method="POST" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     {{ form.profile_image() }}
+    {% for error in form.profile_image.errors %}
+        <b>{{ error }}</b>
+    {% endfor %}
     <br/>
     {{ form.about.label }}
     {{ form.about() }}

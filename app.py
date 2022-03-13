@@ -9,6 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "this-is-my-secret-key"
 app.teardown_appcontext(close_db)
@@ -314,11 +315,13 @@ def edit_profile():
         about = form.about.data
         db = get_db()
 
+        # all the code involved in uploading images is a modified version of the code found here :https://flask-wtf.readthedocs.io/en/latest/form/
+
         # sanitize the name to prevent XSS (probably not necessary since the filename is changed anyway but it's no harm)
         filename = secure_filename(profile_image.filename)
         file_extension = os.path.splitext(filename)[1]
 
-        # the filename for the image will be <username>.jpg because usernames are unique
+        # the filename for the image will be of the form '<username>.<file extension>' because usernames are unique
         new_filename = username + file_extension
         # save the image to the the filepath returned by os.path.join().
         profile_image.save(os.path.join(

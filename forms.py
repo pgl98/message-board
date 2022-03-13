@@ -1,10 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, HiddenField, RadioField
-from flask_wtf.file import FileField # FileField is the Flask-WTF field for files
+from flask_wtf.file import FileField, FileAllowed # FileField is the Flask-WTF field for files
 from wtforms.validators import InputRequired, Length, EqualTo
 
 class ThreadForm(FlaskForm):
-    title = StringField("Title:", validators=[InputRequired(), Length(max=255)])
+    title = StringField("Title:", validators=[InputRequired(), Length(max=100)])
     body = StringField("Body:", validators=[Length(min=0, max=5000)])
     submit = SubmitField("Create Thread")
 
@@ -31,6 +31,6 @@ class DeleteForm(FlaskForm):
 # create the class
 class UserProfileForm(FlaskForm):
     username = HiddenField()
-    profile_image = FileField()
+    profile_image = FileField("Profile Image", validators=[FileAllowed(["jpg", "jpeg", "png"], "Images Only!")])
     about = StringField("About")
     submit = SubmitField("Confirm Edit")
