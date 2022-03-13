@@ -18,7 +18,7 @@
 {% if user_info["profile_image"] %}
 <img src="{{ url_for('static', filename='uploads/' + user_info['profile_image']) }}" alt="profile image" />
 {% else %}
-<p>User has no profile image!</p>
+<img src="{{ url_for('static', filename='default.png') }}" alt="profile image" />
 {% endif %}
 
 <h2>About</h2>

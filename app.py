@@ -152,7 +152,7 @@ def register():
             """, (username, generate_password_hash(password), False, date_created))
             db.commit()
 
-            message = "Successful Registration"
+            message = "Successful Registration"  
 
             return redirect("login")
         except Exception as e:
@@ -304,6 +304,7 @@ def delete_comment():
 @app.route("/edit_profile", methods=["POST"])
 def edit_profile():
     form = UserProfileForm()
+    username = None
     try:
         username = request.form["username"]
         form.username.data = username
@@ -315,24 +316,38 @@ def edit_profile():
         about = form.about.data
         db = get_db()
 
-        # all the code involved in uploading images is a modified version of the code found here :https://flask-wtf.readthedocs.io/en/latest/form/
+        current_profile_image = db.execute("""
+            SELECT profile_image from users
+            WHERE username = ?;
+        """, (username,)).fetchone()["profile_image"]
 
-        # sanitize the name to prevent XSS (probably not necessary since the filename is changed anyway but it's no harm)
-        filename = secure_filename(profile_image.filename)
-        file_extension = os.path.splitext(filename)[1]
+        if profile_image:
+            # if the user already has a profile image, delete it
+            if current_profile_image:
+                os.remove(os.path.join(
+                    app.config["UPLOAD_FOLDER"], current_profile_image
+                ))
 
-        # the filename for the image will be of the form '<username>.<file extension>' because usernames are unique
-        new_filename = username + file_extension
-        # save the image to the the filepath returned by os.path.join().
-        profile_image.save(os.path.join(
-            app.config["UPLOAD_FOLDER"], new_filename
-        ))
+            # all the code involved in uploading images is a modified version of the code found here :https://flask-wtf.readthedocs.io/en/latest/form/
+
+            # sanitize the name to prevent XSS (probably not necessary since the filename is changed anyway but it's no harm)
+            filename = secure_filename(profile_image.filename)
+            file_extension = os.path.splitext(filename)[1]
+
+            # the filename for the image will be of the form '<username>.<file extension>'  because usernames are unique
+            filename = username + file_extension
+            # save the image to the the filepath returned by os.path.join().
+            profile_image.save(os.path.join(
+                app.config["UPLOAD_FOLDER"], filename
+            ))
+        else:
+            filename = current_profile_image
 
         db.execute("""
             UPDATE users
             SET about = ?, profile_image = ?
             WHERE username = ?;
-        """, (about, new_filename, username,))
+        """, (about, filename, username,))
         db.commit()
 
         return redirect( url_for("user_profile", username=username) )
@@ -380,9 +395,19 @@ def delete_user():
             WHERE username = ?;
         """, (username,))
 
+        profile_image = db.execute("""
+            SELECT profile_image from users
+            WHERE username = ?;
+        """, (username,)).fetchone()["profile_image"]
+
+        if profile_image:
+            os.remove(os.path.join(
+                app.config["UPLOAD_FOLDER"], profile_image
+            ))
+
         db.execute("""
             DELETE FROM users
-            WHERE username = ?
+            WHERE username = ?;
         """, (username,))
 
         db.commit()
