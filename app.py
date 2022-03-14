@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, redirect, url_for, session, g, request
+from flask import Flask, render_template, redirect, url_for, session, g, request, abort
 from flask_session import Session
 from functools import wraps
 from forms import ThreadForm, RegisterForm, LoginForm, CommentForm, DeleteForm, UserProfileForm
@@ -36,7 +36,8 @@ def init_db():
 
 @app.before_request
 # registers this function to run before each request,
-# so that if the user is logged in, their username is stored in session
+# so that if the user is logged in, their username is stored in session,
+# and if the user is an admin, 
 def load_logged_in_user():
     g.user = session.get("username", None)
     g.is_admin = session.get("is_admin", False)
@@ -54,11 +55,26 @@ def admin_required(view):
     @wraps(view)
     def decorated_function(**kwargs):
         # to access the page, the user must be logged in and be an admin.
-        if g.user is None or g.is_admin is False:
-            return "you're being naughty, stop"
+        if g.user is None or g.is_admin == False:
+            return abort(401)
         return view(**kwargs)
     return decorated_function
 
+
+#----- Custom Error Handling -----------#
+# just do most common errors.
+# code found here: https://flask.palletsprojects.com/en/2.0.x/errorhandling/#custom-error-pages
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("error.html", error_message=str(e)), 404
+
+@app.errorhandler(401)
+def unauthorized(e):
+    return render_template("error.html", error_message=str(e)), 401
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template("error.html", error_message=str(e)), 500
 
 
 # the code below is a modified version of the code found here :https://flask-wtf.readthedocs.io/en/latest/form/
@@ -302,6 +318,7 @@ def delete_comment():
     return redirect(url_for("thread", thread_id=thread_id))
 
 @app.route("/edit_profile", methods=["POST"])
+@login_required
 def edit_profile():
     form = UserProfileForm()
     username = None
