@@ -12,6 +12,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "this-is-my-secret-key"
+app.config["UPLOAD_FOLDER"] = 'static/uploads/'
 app.teardown_appcontext(close_db)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
@@ -76,28 +77,6 @@ def unauthorized(e):
 def internal_server_error(e):
     return render_template("error.html", error_message=str(e)), 500
 
-
-# the code below is a modified version of the code found here :https://flask-wtf.readthedocs.io/en/latest/form/
-
-app.config["UPLOAD_FOLDER"] = 'static/uploads/'
-
-@app.route("/image_upload_test", methods=["GET", "POST"])
-def image_upload():
-    form = UserProfileForm()
-
-    if form.validate_on_submit():
-        # get the file data
-        image_file = form.profile_image.data
-        # sanitize the name to prevent XSS
-        filename = secure_filename(image_file.filename)
-        # save the image to the the filepath returned by os.path.join().
-        image_file.save(os.path.join(
-            app.config["UPLOAD_FOLDER"], filename
-        ))
-
-    return render_template("image_upload_test.html", form=form)
-
-#-----------------------------------------------
 
 @app.route("/", methods=["GET", "POST"])
 def index():
