@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-{{ username }}
+{{ user_info["username"] }}
 {% endblock %}
 
 {% block main_content %}
@@ -31,5 +31,11 @@
 
 <a href="{{ url_for('user_threads', username=user_info['username']) }}">Threads</a>
 <a href="{{ url_for('user_comments', username=user_info['username']) }}">Comments</a>
+
+{% block user_threads %}
+{% endblock %}
+
+{% block user_comments %}
+{% endblock %}
 
 {% endblock %}

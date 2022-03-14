@@ -18,22 +18,17 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# DELETE THIS BEFORE SUBMITTING
-@app.before_first_request
-def init_db():
-    db = get_db()
-    try:
-        print("hello")
-        pw_hash = generate_password_hash("internetjanitor")
-        db.execute("""
-            INSERT INTO users (username, password_hash, is_admin, date_created)
-            VALUES ("admin", ?, TRUE, "Since the beginning");
-        """, (pw_hash,))
-        db.commit()
-    except:
-        print("admin already in database")
+'''
+There are two types of users - administrators and ordinary users.
+Administrators can delete any thread, comment, or user.
+Ordinary users can only delete their own threads or comments.
+To log in as an admin:
+    username : 'admin',
+    password : 'internetjanitor'
 
-#
+Once you've registered, make sure to customize your profile by clicking on 'User Profile'!
+Check out other people's profiles, too.
+'''
 
 @app.before_request
 # registers this function to run before each request,
@@ -147,23 +142,21 @@ def register():
             """, (username, generate_password_hash(password), False, date_created))
             db.commit()
 
-            message = "Successful Registration"  
-
-            return redirect("login")
+            return redirect( url_for("login", message="Successful Registration"))
         except Exception as e:
             # For now, force user to put in password again. May change later.
             # let them see the taken username, though.
             form.password.data = None
             message = "Username already taken. Try another one."
-            print(str(e))
 
     return render_template("register.html", form=form, message=message)
 
 @app.route("/login", methods=["GET", "POST"])
-def login(message:str=None):
+def login():
     form = LoginForm()
     username = None
     password = None
+    message = request.args.get("message")
 
     if form.validate_on_submit():
         username = form.username.data
@@ -192,9 +185,12 @@ def login(message:str=None):
                 return redirect(next_page)
             else:
                 message = "Invalid username or password"
+                return redirect( url_for('login', message=message))
         except:
             # don't specify which of the username or password is wrong for better security
             message = "Invalid username or password"
+    else:
+        message = ""
 
     return render_template("login.html", form=form, message=message)
 
@@ -212,23 +208,33 @@ def user_profile(username):
 def user_comments(username):
     db = get_db()
 
+    user_info = db.execute("""
+        SELECT username, date_created, about, profile_image FROM users
+        WHERE username = ?;
+    """, (username,)).fetchone()
+
     comments = db.execute("""
         SELECT * FROM comments
         WHERE username = ?;
     """, (username,))
 
-    return render_template("user_comments.html", username=username, comments=comments)
+    return render_template("user_comments.html", user_info=user_info, comments=comments)
 
 @app.route("/user/<username>/threads")
 def user_threads(username):
     db = get_db()
+
+    user_info = db.execute("""
+        SELECT username, date_created, about, profile_image FROM users
+        WHERE username = ?;
+    """, (username,)).fetchone()
 
     threads = db.execute("""
         SELECT * FROM threads
         WHERE user_poster = ?;
     """, (username,))
 
-    return render_template("user_threads.html", username=username, threads=threads)
+    return render_template("user_threads.html", user_info=user_info, threads=threads)
 
 #------- ROUTES FOR LOGGED-IN USERS ONLY ----------------
 
@@ -279,7 +285,7 @@ def delete_thread():
 
     db.commit()
 
-    return redirect("/")
+    return redirect( url_for("index") )
 
 @app.route("/delete_comment/", methods=["POST"])
 @login_required
@@ -294,21 +300,29 @@ def delete_comment():
     """, (comment_id,))
     db.commit()
 
-    return redirect(url_for("thread", thread_id=thread_id))
+    return redirect( url_for("thread", thread_id=thread_id) )
 
 @app.route("/edit_profile", methods=["POST"])
 @login_required
 def edit_profile():
     form = UserProfileForm()
-    username = None
+    username = ""
+    filename = ""
+
+    # there are two ways to access this route:
+    #   i.  by submitting form in the 'user_list' route
+    #   ii. by submitting the form in this route
+
+    # if i., get the username from the request
     try:
         username = request.form["username"]
         form.username.data = username
+    # if ii. get the username from the form
     except:
         username = form.id.data
 
     if form.validate_on_submit():
-        profile_image = form.profile_image.data
+        new_profile_image = form.profile_image.data
         about = form.about.data
         db = get_db()
 
@@ -317,7 +331,8 @@ def edit_profile():
             WHERE username = ?;
         """, (username,)).fetchone()["profile_image"]
 
-        if profile_image:
+        # if the user has submitted a new profile image...
+        if new_profile_image:
             # if the user already has a profile image, delete it
             if current_profile_image:
                 os.remove(os.path.join(
@@ -327,13 +342,13 @@ def edit_profile():
             # all the code involved in uploading images is a modified version of the code found here :https://flask-wtf.readthedocs.io/en/latest/form/
 
             # sanitize the name to prevent XSS (probably not necessary since the filename is changed anyway but it's no harm)
-            filename = secure_filename(profile_image.filename)
+            filename = secure_filename(new_profile_image.filename)
             file_extension = os.path.splitext(filename)[1]
 
-            # the filename for the image will be of the form '<username>.<file extension>'  because usernames are unique
+            # the filename for the image will be of the form '<username>.<file extension>' because usernames are unique
             filename = username + file_extension
             # save the image to the the filepath returned by os.path.join().
-            profile_image.save(os.path.join(
+            new_profile_image.save(os.path.join(
                 app.config["UPLOAD_FOLDER"], filename
             ))
         else:
@@ -369,12 +384,10 @@ def user_list():
 def delete_user():
     form = DeleteForm()
 
-    # when the admin visits this route for the first time after submitting the form in delete_user.html,
-    # we can extract the username from the form.
+    # same reasoning as for 'edit_profile' above
     try:
         username = request.form["username"]
         form.id.data = username
-    # if username is None, then it was the form from DeleteForm that was submitted
     except:
         username = form.id.data
 

@@ -1,11 +1,6 @@
-{% extends 'base.html' %}
+{% extends 'user_profile.html' %}
 
-{% block title %}
-{{ username }}
-{% endblock %}
-
-{% block main_content %}
-<h1>{{ username }}</h1>
+{% block user_threads %}
 
 <h2>Threads</h2>
 {% for thread in threads %}
