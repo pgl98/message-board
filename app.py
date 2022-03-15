@@ -73,7 +73,7 @@ def internal_server_error(e):
     return render_template("error.html", error_message=str(e)), 500
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
 def index():
     db = get_db()
 
@@ -106,7 +106,7 @@ def thread(thread_id):
         """, (thread_id, username, date_created, body,))
         db.commit()
 
-        return redirect(url_for("thread", thread_id=thread_id))
+        return redirect( url_for("thread", thread_id=thread_id) )
 
     comments = db.execute("""
         SELECT * FROM comments
@@ -142,7 +142,7 @@ def register():
             """, (username, generate_password_hash(password), False, date_created))
             db.commit()
 
-            return redirect( url_for("login", message="Successful Registration"))
+            return redirect( url_for("login", message="Successful Registration") )
         except Exception as e:
             # For now, force user to put in password again. May change later.
             # let them see the taken username, though.
@@ -242,7 +242,7 @@ def user_threads(username):
 def logout():
     session.clear()
 
-    return redirect("login")
+    return redirect( url_for("login") )
 
 @app.route("/post_thread", methods=["GET", "POST"])
 @login_required
@@ -263,7 +263,7 @@ def post_thread():
 
         db.commit()
 
-        return redirect("/")
+        return redirect( url_for("index") )
     
     return render_template("thread_form.html", form=form)
 
@@ -421,6 +421,6 @@ def delete_user():
 
         db.commit()
 
-        return redirect("user_list")
+        return redirect( url_for("user_list") )
 
     return render_template("delete_user.html", form=form, username=username)
