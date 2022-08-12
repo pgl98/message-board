@@ -1,0 +1,11 @@
+{% extends 'user_profile.html' %}
+
+{% block user_comments %}
+
+<h2>Comments</h2>
+{% for comment in comments %}
+    <p class="comment_info">{{ comment["date_created"] }}, <a href="{{ url_for('user.user_profile', username=comment['username']) }}">{{ comment["username"] }}</a></p>
+    <p class="comment_body"><a href="{{ url_for('thread.thread', thread_id=comment['thread_id']) }}">{{ comment["body"] }}</a></p>
+{% endfor %}
+
+{% endblock %}

@@ -8,19 +8,19 @@
 
 <section class="thread_detailed">
     <h1>{{ thread["title"] }}</h1>
-    <p>by <a href="{{ url_for('user_profile', username=thread['user_poster']) }}">{{ thread["user_poster"] }}</a> on {{ thread["date_created"] }}</p>
+    <p>by <a href="{{ url_for('user.user_profile', username=thread['user_poster']) }}">{{ thread["user_poster"] }}</a> on {{ thread["date_created"] }}</p>
     <p class="thread_body">{{ thread["body"] }}</p>
 </section>
 
 <section class="comments_section">
 <h3>Comments</h3>
 {% for comment in comments %}
-    <p class="comment_info">{{ comment["date_created"] }}, <a href="{{ url_for('user_profile', username=comment['username']) }}">{{ comment["username"] }}</a></p>
+    <p class="comment_info">{{ comment["date_created"] }}, <a href="{{ url_for('user.user_profile', username=comment['username']) }}">{{ comment["username"] }}</a></p>
     <p class="comment_body">{{ comment["body"] }}</p>
     {% if g.user == comment["username"] or g.is_admin %}
         <!-- I realise that this form is vulnerable to CSRF, but doing it this way is the only way I can think of that doesn't make the code messy.
         This page already has the CommentForm, adding another form seems to make things complicated.-->
-        <form action="{{ url_for('delete_comment') }}" method="POST" novalidate>
+        <form action="{{ url_for('thread.delete_comment') }}" method="POST" novalidate>
             <input type="hidden" name="comment_id" value="{{ comment['comment_id'] }}" />
             <input type="hidden" name="thread_id" value="{{ thread['thread_id'] }}" />
             <input type="submit" value="Delete" class="delete_button" />

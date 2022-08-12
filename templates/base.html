@@ -9,30 +9,30 @@
 </head>
 <body>
     <nav>
-        <a href="{{ url_for('index') }}">
+        <a href="{{ url_for('thread.index') }}">
             Home
         </a>
-        <a href="{{ url_for('post_thread') }}">
+        <a href="{{ url_for('user.post_thread') }}">
             Create new thread
         </a>
         {% if g.user %}
-            <a href="{{ url_for('user_profile', username=g.user) }}">
+            <a href="{{ url_for('user.user_profile', username=g.user) }}">
                 User Profile
             </a>
-            <a href="{{ url_for('logout') }}">
+            <a href="{{ url_for('auth.logout') }}">
                 Log Out
             </a>
         {% else %}
-            <a href="{{ url_for('login') }}">
+            <a href="{{ url_for('auth.login') }}">
                 Log In
             </a>
-            <a href="{{ url_for('register') }}">
+            <a href="{{ url_for('auth.register') }}">
                 Register
             </a>
         {% endif %}
 
         {% if g.is_admin %}
-            <a href="{{ url_for('user_list') }}">
+            <a href="{{ url_for('user.user_list') }}">
                 User List
             </a>
         {% endif %}

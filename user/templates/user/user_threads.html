@@ -1,0 +1,10 @@
+{% extends 'user_profile.html' %}
+
+{% block user_threads %}
+
+<h2>Threads</h2>
+{% for thread in threads %}
+    <p><a href="{{ url_for('thread.thread', thread_id=thread['thread_id']) }}">{{ thread["title"] }}</a> on {{ thread["date_created"] }}</p>
+{% endfor %}
+
+{% endblock %}

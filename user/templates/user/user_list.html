@@ -11,8 +11,8 @@ User List
 {% for user in user_list %}
     {% set username = user["username"] %}
     <li>
-        <a href="{{ url_for('user_profile', username=username) }}">{{ username }}</a>
-        <form action="{{ url_for('delete_user') }}" method="POST" novalidate>
+        <a href="{{ url_for('user.user_profile', username=username) }}">{{ username }}</a>
+        <form action="{{ url_for('user.delete_user') }}" method="POST" novalidate>
             <input type="hidden" name="username" value="{{ username }}" />
             <input type="submit" value="Delete" class="delete_button" />
         </form>
