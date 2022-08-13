@@ -1,9 +1,10 @@
-from flask import render_template, redirect, request, url_for, Blueprint, session
-from forms import LoginForm, RegisterForm
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
+from flask import render_template, redirect, request, url_for, Blueprint, session
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from database import get_db
+from forms import LoginForm, RegisterForm
 
 auth_bp = Blueprint('auth', __name__, template_folder='../auth/templates/auth')
 
@@ -62,7 +63,6 @@ def login():
             """, (username,)).fetchone()
 
             password_is_valid = check_password_hash(user["password_hash"], password)
-            print(password_is_valid)
 
             if user is not None and password_is_valid:
                 message = "Successful log in!"
@@ -78,7 +78,7 @@ def login():
             else:
                 message = "Invalid username or password"
                 return redirect( url_for('login', message=message))
-        except Exception as e:
+        except:
             # don't specify which of the username or password is wrong for better security
             message = "Invalid username or password"
     else:

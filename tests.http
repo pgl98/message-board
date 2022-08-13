@@ -1,0 +1,22 @@
+POST http://127.0.0.1:5000/api/login HTTP/1.1
+content-type: application/json
+
+{
+    "username": "admin",
+    "password": "internetjanitor"
+}
+
+###
+
+POST http://127.0.0.1:5000/api/comment/1 HTTP/1.1
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQyMTA0MiwiZXhwIjoxNjYwNDIyODQyLCJpc19hZG1pbiI6MX0.aSIrgnvXNbA0x9aNRMAgpOkPONPE0JazZ3zUNj8GTuY
+
+###
+
+POST http://127.0.0.1:5000/api/login HTTP/1.1
+content-type: application/json
+
+{
+    "username": "lol",
+    "password": "internetjanitor"
+}

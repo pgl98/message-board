@@ -1,11 +1,12 @@
 import os
-from flask import Blueprint, render_template, redirect, url_for, session, request, current_app
 from datetime import datetime
+
+from flask import Blueprint, render_template, redirect, url_for, session, request, current_app
 from werkzeug.utils import secure_filename
 
 from database import get_db
-from forms import ThreadForm, DeleteForm, UserProfileForm
 from decorators import login_required, admin_required
+from forms import ThreadForm, DeleteForm, UserProfileForm
 
 user_bp = Blueprint('user', __name__, template_folder='../user/templates/user')
 

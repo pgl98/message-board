@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, request, session
-from database import get_db
-from forms import CommentForm
 from datetime import datetime
 
+from flask import Blueprint, render_template, redirect, url_for, request, session
+
+from database import get_db
 from decorators import login_required
+from forms import CommentForm
 
 thread_bp = Blueprint('thread', __name__, template_folder='../thread/templates/thread')
 
