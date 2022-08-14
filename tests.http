@@ -1,3 +1,7 @@
+GET http://127.0.0.1:5000/api/threads/2 HTTP/1.1
+
+###
+
 POST http://127.0.0.1:5000/api/login HTTP/1.1
 content-type: application/json
 
@@ -5,11 +9,46 @@ content-type: application/json
     "username": "admin",
     "password": "internetjanitor"
 }
+###
+
+POST http://127.0.0.1:5000/api/create_thread HTTP/1.1
+content-type: application/json
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQ3NjI4OSwiZXhwIjoxNjYwNDc4MDg5LCJpc19hZG1pbiI6MX0.CnRp5JwOn4F0uQq8NHrIyIiqxpmvuiL4SFyWZ9zDCp8
+
+{
+    "title": "test",
+    "body": "this thread was created from the api"
+}
+
+###
+
+POST http://127.0.0.1:5000/api/delete_thread/13 HTTP/1.1
+content-type: application/json
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQ3NjI4OSwiZXhwIjoxNjYwNDc4MDg5LCJpc19hZG1pbiI6MX0.CnRp5JwOn4F0uQq8NHrIyIiqxpmvuiL4SFyWZ9zDCp8
+
+{
+    "title": "test",
+    "body": "this thread was created from the api"
+}
 
 ###
 
 POST http://127.0.0.1:5000/api/comment/1 HTTP/1.1
-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQyMTA0MiwiZXhwIjoxNjYwNDIyODQyLCJpc19hZG1pbiI6MX0.aSIrgnvXNbA0x9aNRMAgpOkPONPE0JazZ3zUNj8GTuY
+content-type: application/json
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQ3NjI4OSwiZXhwIjoxNjYwNDc4MDg5LCJpc19hZG1pbiI6MX0.CnRp5JwOn4F0uQq8NHrIyIiqxpmvuiL4SFyWZ9zDCp8
+
+{
+    "comment": "hi"
+}
+###
+
+POST http://127.0.0.1:5000/api/comment/1 HTTP/1.1
+content-type: application/json
+Authorization: eyJ0eXAiOiJKV1QiLdJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQ3NjI4OSwiZXhwIjoxNjYwNDc4MDg5LCJpc19hZG1pbiI6MX0.CnRp5JwOn4F0uQq8NHrIyIiqxpmvuiL4SFyWZ9zDCp8
+
+{
+    "comment": "hi"
+}
 
 ###
 
