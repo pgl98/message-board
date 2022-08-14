@@ -16,6 +16,10 @@ api_bp = Blueprint('api', __name__)
 def custom_401(error):
     return Response('Invalid Credentials', 401, {'WWW-Authenticate':'Basic realm="Login Required"'})
 
+@api_bp.errorhandler(404)
+def custom_404(error):
+    return Response('Resource not found.', 404)
+
 # when a user has a token and makes a request, it should be placed at the 'Authorization' header
 def api_login_required(view):
     @wraps(view)
@@ -54,10 +58,14 @@ def thread(thread_id):
         WHERE thread_id = ?;
     """, (thread_id,)).fetchall()
 
+    if thread is None:
+        abort(404)
+
     response = {
         "thread": thread,
         "comments": comments
     }
+
 
     return json.dumps(response)
 
@@ -93,7 +101,9 @@ def delete_thread(thread_id):
         WHERE thread_id = ?;
     """, (thread_id,)).fetchone()
 
-    if username == thread["user_poster"] or is_admin:
+    if thread is None:
+        abort(404)
+    elif username == thread["user_poster"] or is_admin:
         db.execute("""
         DELETE FROM threads
         WHERE thread_id = ?;
@@ -108,7 +118,7 @@ def delete_thread(thread_id):
 
         return "", 204
     else:
-        abort(401)
+        abort(400)
 
 # to make a comment on a thread, send a POST request with comment in json
 @api_bp.route("/comment/<int:thread_id>", methods=["POST"])
@@ -127,6 +137,34 @@ def comment(thread_id):
 
     return "", 201
 
+@api_bp.route("/delete_comment/<int:comment_id>", methods=["POST"])
+@api_login_required
+def delete_comment(comment_id):
+    token_data = jwt.decode(request.headers["Authorization"], key=current_app.config["SECRET_KEY"], algorithms='HS256')
+    username = token_data["sub"]
+    is_admin = token_data["is_admin"]
+
+    db = get_db_api()
+    comment = db.execute("""
+        SELECT * FROM comments
+        WHERE comment_id = ?;
+    """, (comment_id,)).fetchone()
+
+    if comment is None:
+        abort(404)
+    elif username == comment["username"] or is_admin:
+        db.execute("""
+            DELETE FROM comments
+            WHERE comment_id = ?;
+        """, (comment_id,))
+
+        db.commit()
+
+        return "", 204
+    else:
+        abort(400)
+
+    return "delete comment"
 
 @api_bp.route("/register", methods=["POST"])
 def register():
