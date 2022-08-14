@@ -286,3 +286,45 @@ def user_comments(username):
     """, (username,)).fetchall()
 
     return json.dumps(comments)
+
+@api_bp.route("/delete_user/<username_to_be_deleted>", methods=["POST"])
+@api_login_required
+def delete_user(username_to_be_deleted):
+    token_data = jwt.decode(request.headers["Authorization"], key=current_app.config["SECRET_KEY"], algorithms='HS256')
+    username = token_data["sub"]
+    is_admin = token_data["is_admin"]
+
+    db = get_db_api()
+    user = db.execute("""
+        SELECT * FROM users
+        WHERE username = ?;
+    """, (username_to_be_deleted,)).fetchone()
+
+    if user is None:
+        abort(404)
+    elif username == user["username"] or is_admin:
+        if user['profile_image']:
+            print('has profile image')
+        else:
+            print('has no profile image')
+
+        db.execute("""
+            DELETE FROM threads
+            WHERE user_poster = ?;
+        """, (username_to_be_deleted,))
+
+        db.execute("""
+            DELETE FROM comments
+            WHERE username = ?;
+        """, (username_to_be_deleted,))
+
+        db.execute("""
+            DELETE FROM users
+            WHERE username = ?;
+        """, (username_to_be_deleted,))
+
+        db.commit()
+
+        return "", 204
+    else:
+        abort(400)

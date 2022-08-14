@@ -6,7 +6,7 @@ POST http://127.0.0.1:5000/api/register HTTP/1.1
 content-type: application/json
 
 {
-    "username": "yo",
+    "username": "admin",
     "password": "internetjanitor"
 }
 
@@ -85,3 +85,8 @@ GET http://127.0.0.1:5000/api/user/Cthon98/threads HTTP/1.1
 
 ###
 GET http://127.0.0.1:5000/api/user/AzureDiamond/comments HTTP/1.1
+
+###
+POST http://127.0.0.1:5000/api/delete_user/yo HTTP/1.1
+content-type: application/json
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQ5MTkyMywiZXhwIjoxNjYwNDkzNzIzLCJpc19hZG1pbiI6MX0.K0zN1x5dnvO3Conzu2gaWNz2VAfbOKqKzgpO6v2BqDg
