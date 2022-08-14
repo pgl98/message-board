@@ -79,3 +79,9 @@ content-type: application/json
 ##########
 
 GET http://127.0.0.1:5000/api/user/admin HTTP/1.1
+
+###
+GET http://127.0.0.1:5000/api/user/Cthon98/threads HTTP/1.1
+
+###
+GET http://127.0.0.1:5000/api/user/AzureDiamond/comments HTTP/1.1

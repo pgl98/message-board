@@ -248,3 +248,41 @@ def profile_image(username):
         abort(404)
 
     return send_from_directory(current_app.config["UPLOAD_FOLDER"], user_info['profile_image'], mimetype='image/gif')
+
+@api_bp.route("/user/<username>/threads")
+def user_threads(username):
+    db = get_db_api()
+
+    user_info = db.execute("""
+        SELECT username, date_created, about, profile_image FROM users
+        WHERE username = ?;
+    """, (username,)).fetchone()
+
+    if user_info is None:
+        abort(404)
+
+    threads = db.execute("""
+        SELECT * FROM threads
+        WHERE user_poster = ?;
+    """, (username,)).fetchall()
+
+    return json.dumps(threads)
+
+@api_bp.route("/user/<username>/comments")
+def user_comments(username):
+    db = get_db_api()
+
+    user_info = db.execute("""
+        SELECT username, date_created, about, profile_image FROM users
+        WHERE username = ?;
+    """, (username,)).fetchone()
+
+    if user_info is None:
+        abort(404)
+
+    comments = db.execute("""
+        SELECT * FROM comments
+        WHERE username = ?;
+    """, (username,)).fetchall()
+
+    return json.dumps(comments)

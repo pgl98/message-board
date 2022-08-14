@@ -34,7 +34,7 @@ def user_comments(username):
     comments = db.execute("""
         SELECT * FROM comments
         WHERE username = ?;
-    """, (username,))
+    """, (username,)).fetchall()
 
     return render_template("user_comments.html", user_info=user_info, comments=comments)
 
