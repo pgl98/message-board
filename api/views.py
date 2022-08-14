@@ -1,7 +1,8 @@
 from crypt import methods
 from datetime import datetime, timedelta
+import mimetypes
 
-from flask import Blueprint, request, current_app, abort, make_response, jsonify, Response
+from flask import Blueprint, request, current_app, abort, make_response, Response, send_from_directory
 from functools import wraps
 import json
 import jwt
@@ -32,7 +33,7 @@ def api_login_required(view):
         return view(**kwargs)
     return decorated_function
 
-
+#-------------------- THREADS/COMMENTS -----------------------------
 @api_bp.route("/threads")
 def threads():
     db = get_db_api()
@@ -164,8 +165,8 @@ def delete_comment(comment_id):
     else:
         abort(400)
 
-    return "delete comment"
 
+#-------------------------- AUTHORIZATION --------------------------------------
 @api_bp.route("/register", methods=["POST"])
 def register():
     data = request.get_json()
@@ -218,3 +219,32 @@ def login():
             return response
     except:
         abort(401)
+
+
+#----------------------------- USERS ----------------------------------------
+@api_bp.route("/user/<username>")
+def user_profile(username):
+    db = get_db_api()
+    user_info = db.execute("""
+        SELECT username, date_created, about, profile_image FROM users
+        WHERE username = ?;
+    """, (username,)).fetchone()
+    # N.B. each user can have a profile image, the 'profile_image' in user_info is the NAME of the image, not the actual image itself,
+    # in order to get the image, use the '/user/<username>/profile_image' endpoint
+    if user_info is None:
+        abort(404)
+
+    return json.dumps(user_info)
+
+@api_bp.route("/user/<username>/profile_image")
+def profile_image(username):
+    db = get_db_api()
+    user_info = db.execute("""
+        SELECT username, date_created, about, profile_image FROM users
+        WHERE username = ?;
+    """, (username,)).fetchone()
+
+    if user_info is None:
+        abort(404)
+
+    return send_from_directory(current_app.config["UPLOAD_FOLDER"], user_info['profile_image'], mimetype='image/gif')

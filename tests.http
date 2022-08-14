@@ -1,4 +1,14 @@
-GET http://127.0.0.1:5000/api/threads/2 HTTP/1.1
+GET http://127.0.0.1:5000/api/threads/100 HTTP/1.1
+
+###
+
+POST http://127.0.0.1:5000/api/register HTTP/1.1
+content-type: application/json
+
+{
+    "username": "yo",
+    "password": "internetjanitor"
+}
 
 ###
 
@@ -13,7 +23,7 @@ content-type: application/json
 
 POST http://127.0.0.1:5000/api/create_thread HTTP/1.1
 content-type: application/json
-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQ3NjI4OSwiZXhwIjoxNjYwNDc4MDg5LCJpc19hZG1pbiI6MX0.CnRp5JwOn4F0uQq8NHrIyIiqxpmvuiL4SFyWZ9zDCp8
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQ4ODk3MiwiZXhwIjoxNjYwNDkwNzcyLCJpc19hZG1pbiI6MX0.C7la7Og-f3RCmgZtZO4rcp2scxH6sN6JKMz1z_1v4Qg
 
 {
     "title": "test",
@@ -22,7 +32,7 @@ Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6
 
 ###
 
-POST http://127.0.0.1:5000/api/delete_thread/13 HTTP/1.1
+POST http://127.0.0.1:5000/api/delete_thread/10 HTTP/1.1
 content-type: application/json
 Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQ3NjI4OSwiZXhwIjoxNjYwNDc4MDg5LCJpc19hZG1pbiI6MX0.CnRp5JwOn4F0uQq8NHrIyIiqxpmvuiL4SFyWZ9zDCp8
 
@@ -40,6 +50,12 @@ Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6
 {
     "comment": "hi"
 }
+###
+
+POST http://127.0.0.1:5000/api/delete_comment/25 HTTP/1.1
+content-type: application/json
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQ4ODk3MiwiZXhwIjoxNjYwNDkwNzcyLCJpc19hZG1pbiI6MX0.C7la7Og-f3RCmgZtZO4rcp2scxH6sN6JKMz1z_1v4Qg
+
 ###
 
 POST http://127.0.0.1:5000/api/comment/1 HTTP/1.1
@@ -59,3 +75,7 @@ content-type: application/json
     "username": "lol",
     "password": "internetjanitor"
 }
+
+##########
+
+GET http://127.0.0.1:5000/api/user/admin HTTP/1.1
