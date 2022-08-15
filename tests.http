@@ -36,11 +36,6 @@ POST http://127.0.0.1:5000/api/delete_thread/10 HTTP/1.1
 content-type: application/json
 Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQ3NjI4OSwiZXhwIjoxNjYwNDc4MDg5LCJpc19hZG1pbiI6MX0.CnRp5JwOn4F0uQq8NHrIyIiqxpmvuiL4SFyWZ9zDCp8
 
-{
-    "title": "test",
-    "body": "this thread was created from the api"
-}
-
 ###
 
 POST http://127.0.0.1:5000/api/comment/1 HTTP/1.1
@@ -89,4 +84,35 @@ GET http://127.0.0.1:5000/api/user/AzureDiamond/comments HTTP/1.1
 ###
 POST http://127.0.0.1:5000/api/delete_user/yo HTTP/1.1
 content-type: application/json
-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQ5MTkyMywiZXhwIjoxNjYwNDkzNzIzLCJpc19hZG1pbiI6MX0.K0zN1x5dnvO3Conzu2gaWNz2VAfbOKqKzgpO6v2BqDg
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDQ5MzExMiwiZXhwIjoxNjYwNDk0OTEyLCJpc19hZG1pbiI6MX0.-T0B7JD4XEn_3Iji2-U-_QPDs9lwjO6HR0-PadoqfQY
+
+###
+POST http://127.0.0.1:5000/api/login HTTP/1.1
+content-type: application/json
+
+{
+    "username": "admin",
+    "password": "internetjanitor"
+}
+###
+PUT http://127.0.0.1:5000/api/user/admin/edit_profile HTTP/1.1
+content-type: application/json
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDU4MzgwOCwiZXhwIjoxNjYwNTg1NjA4LCJpc19hZG1pbiI6MX0.YKai-pcAwtz8As2CJZW8tq3EPoNx74ong6HeIE2b43g
+
+{
+    "about": "this is from the api"
+}
+
+###
+POST http://127.0.0.1:5000/api/create_thread HTTP/1.1
+content-type: application/json
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDU4MzgwOCwiZXhwIjoxNjYwNTg1NjA4LCJpc19hZG1pbiI6MX0.YKai-pcAwtz8As2CJZW8tq3EPoNx74ong6HeIE2b43g
+
+{
+    "title": "test",
+    "body": "this thread was created from the api"
+}
+###
+DELETE http://127.0.0.1:5000/api/delete_thread/16 HTTP/1.1
+content-type: application/json
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDU4MzgwOCwiZXhwIjoxNjYwNTg1NjA4LCJpc19hZG1pbiI6MX0.YKai-pcAwtz8As2CJZW8tq3EPoNx74ong6HeIE2b43g

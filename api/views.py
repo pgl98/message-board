@@ -1,6 +1,5 @@
 from crypt import methods
 from datetime import datetime, timedelta
-import mimetypes
 
 from flask import Blueprint, request, current_app, abort, make_response, Response, send_from_directory
 from functools import wraps
@@ -89,7 +88,7 @@ def create_thread():
 
     return "", 201
 
-@api_bp.route("/delete_thread/<int:thread_id>", methods=["POST"])
+@api_bp.route("/delete_thread/<int:thread_id>", methods=["DELETE"])
 @api_login_required
 def delete_thread(thread_id):
     token_data = jwt.decode(request.headers["Authorization"], key=current_app.config["SECRET_KEY"], algorithms='HS256')
@@ -287,7 +286,38 @@ def user_comments(username):
 
     return json.dumps(comments)
 
-@api_bp.route("/delete_user/<username_to_be_deleted>", methods=["POST"])
+@api_bp.route("/user/<username>/edit_profile", methods=["PUT"])
+@api_login_required
+def edit_profile(username):
+    '''
+    This only edits the 'About' section of the profile. Changing the profile image is another endpoint.
+    '''
+    token_data = jwt.decode(request.headers["Authorization"], key=current_app.config["SECRET_KEY"], algorithms='HS256')
+    username = token_data["sub"]
+    data = request.get_json()
+    about = data["about"]
+
+    db = get_db_api()
+    user = db.execute("""
+        SELECT * FROM users
+        WHERE username = ?;
+    """, (username,)).fetchone()
+
+    if user is None:
+        abort(404)
+    elif username == user["username"]:
+        db.execute("""
+            UPDATE users
+            SET about = ?
+            WHERE username = ?;
+        """, (about, username,))
+        db.commit()
+
+        return "", 204
+    else:
+        abort(400)
+
+@api_bp.route("/delete_user/<username_to_be_deleted>", methods=["DELETE"])
 @api_login_required
 def delete_user(username_to_be_deleted):
     token_data = jwt.decode(request.headers["Authorization"], key=current_app.config["SECRET_KEY"], algorithms='HS256')
