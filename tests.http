@@ -104,6 +104,14 @@ Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6
 }
 
 ###
+POST http://127.0.0.1:5000/api/user/admin/edit_profile/change_profile_image HTTP/1.1
+Content-Disposition: form-data; name="file"; filename="image1.jpg"
+Content-Type: image/jpeg
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDkwNjExMiwiZXhwIjoxNjYwOTA3OTEyLCJpc19hZG1pbiI6MX0.5Ue1-qXxrWub2fMC9NXPnoqxbzppKeGxFP3e7H42gfU
+
+< ./cat.jpeg
+
+###
 POST http://127.0.0.1:5000/api/create_thread HTTP/1.1
 content-type: application/json
 Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY2MDU4MzgwOCwiZXhwIjoxNjYwNTg1NjA4LCJpc19hZG1pbiI6MX0.YKai-pcAwtz8As2CJZW8tq3EPoNx74ong6HeIE2b43g

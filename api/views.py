@@ -1,11 +1,13 @@
-from crypt import methods
+import os
 from datetime import datetime, timedelta
 
 from flask import Blueprint, request, current_app, abort, make_response, Response, send_from_directory
 from functools import wraps
 import json
 import jwt
+from werkzeug.datastructures import FileStorage
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 
 from database import get_db_api
 
@@ -137,7 +139,7 @@ def comment(thread_id):
 
     return "", 201
 
-@api_bp.route("/delete_comment/<int:comment_id>", methods=["POST"])
+@api_bp.route("/delete_comment/<int:comment_id>", methods=["DELETE"])
 @api_login_required
 def delete_comment(comment_id):
     token_data = jwt.decode(request.headers["Authorization"], key=current_app.config["SECRET_KEY"], algorithms='HS256')
@@ -290,7 +292,7 @@ def user_comments(username):
 @api_login_required
 def edit_profile(username):
     '''
-    This only edits the 'About' section of the profile. Changing the profile image is another endpoint.
+    This only edits the 'About' section of the profile.
     '''
     token_data = jwt.decode(request.headers["Authorization"], key=current_app.config["SECRET_KEY"], algorithms='HS256')
     username = token_data["sub"]
@@ -316,6 +318,7 @@ def edit_profile(username):
         return "", 204
     else:
         abort(400)
+
 
 @api_bp.route("/delete_user/<username_to_be_deleted>", methods=["DELETE"])
 @api_login_required
