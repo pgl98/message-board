@@ -1,0 +1,15 @@
+{
+    "serviceName": "message-board",
+    "containers": {
+        "message-board-container": {
+            "image": ":message-board.latest.1",
+            "ports": {
+                "5000": "HTTP"
+            }
+        }
+    },
+    "publicEndpoint": {
+        "containerName": "message-board-container",
+        "containerPort": 5000
+    }
+}
